@@ -41,6 +41,7 @@ function adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
     local enemyY = math.random(1, gridSizeY)
     if (testMap(map, enemyX, enemyY)) then
       enemies[#enemies + 1] = adversary.new(enemyX, enemyY)
+      registerEnemyMap(map, enemyX, enemyY)
       enemiesPlaced = enemiesPlaced + 1
     end
   end
