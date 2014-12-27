@@ -7,12 +7,10 @@ function tiles.newFloor()
     monster = {},
     loot = {},
     type = "floor",
-    visible = false,
-    stairs = 0
+    visible = false
   }
   return newTile
 end
-
 
 function tiles.newWall()
   local newTile = {
@@ -20,8 +18,29 @@ function tiles.newWall()
     monster = {},
     loot = {},
     type = "wall",
-    visible = false,
-    stairs = 0
+    visible = false
+  }
+  return newTile
+end
+
+function tiles.newStairsUp()
+  local newTile = {
+    walkable = true,
+    monster = {},
+    loot = {},
+    type = "stairsup",
+    visible = false
+  }
+  return newTile
+end
+
+function tiles.newStairsDown()
+  local newTile = {
+    walkable = true,
+    monster = {},
+    loot = {},
+    type = "stairsdown",
+    visible = false
   }
   return newTile
 end
