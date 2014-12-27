@@ -2,6 +2,7 @@ require "players"
 require "enemies"
 require "maps"
 require "table_save"
+require "config"
 
 
 function love.load()
