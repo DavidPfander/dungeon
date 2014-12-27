@@ -116,9 +116,47 @@ function maps.generateMap(sizeX, sizeY)
   
     maps.currentFactor = maps.numFloorTiles / maps.mapSize
 
-    -- print(maps.currentFactor)    
+    print(maps.currentFactor)    
   end
   
   return maps.map
 end
+
+-- Returns true if the tile is not walkable or there is a monster on the field 
+function maps.testMap(map, x, y)
+  if map[x][y].walkable == true or next(map[x][y].monster) then
+    return true
+  end
+  return false
+end
+
+-- Returns true if there is a monster on the field
+function maps.testEnemyMap(map, x, y)
+  if next(map[x][y].monster) then
+    return true
+  end
+  return false
+end
+
+-- Places a new monster "newMonster" on the coordinates "x","y"
+function maps.registerEnemyMap(map, x, y, newMonster)
+  map[x][y].monster = newMonster
+end
+
+-- Moves the monster "movingMonster" from "oldX","oldY" to "x","y"
+function maps.moveEnemyMap(map, oldX, oldY, x, y, movingMonster)
+  map[oldX][oldY].monster = {}
+  map[x][y].monster = movingMonster
+end
+
+-- Returns true iff the tile at "x","y" is not walkable
+function maps.enemyHitMap(map, x, y)
+  if map[x][y].isWalkable == true then
+    return false
+  else
+    return true
+  end
+end
+
+
 

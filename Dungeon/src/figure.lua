@@ -43,7 +43,7 @@ function figure.keypressed(player, key, map)
     newY = player.gridY
   end
 
-  if testMap(map, newX, newY) then
+  if maps.testMap(map, newX, newY) then
     player.gridX = newX
     player.gridY = newY
   else
@@ -51,7 +51,7 @@ function figure.keypressed(player, key, map)
   end
 
   -- check whether enemy was hit
-  if enemyHitMap(map, player.gridX, player.gridY) then
+  if maps.enemyHitMap(map, player.gridX, player.gridY) then
     removeEnemy(player.gridX, player.gridY)
   end
 end

@@ -97,34 +97,3 @@ function love.keypressed(key)
   end
   figure.keypressed(player, key, map)
 end
-
-function testMap(map, x, y)
-  if map[x][y] == 0 or map[x][y] == 2 then
-    return true
-  end
-  return false
-end
-
-function testEnemyMap(map, x, y)
-  if map[x][y] == 0 then
-    return true
-  end
-  return false
-end
-
-function registerEnemyMap(map, x, y)
-  map[x][y] = 2
-end
-
-function moveEnemyMap(map, oldX, oldY, x, y)
-  map[oldX][oldY] = 0
-  map[x][y] = 2
-end
-
-function enemyHitMap(map, x, y)
-  if map[x][y] == 2 then
-    return true
-  else
-    return false
-  end
-end

@@ -1,4 +1,5 @@
 require "util"
+require "maps"
 
 local P = {}
 adversary = P
@@ -27,16 +28,16 @@ function adversary.update(dt, map, enemy)
       offset = -1
     end
     if math.random() > 0.5 then
-      if testMap(map, enemy.gridX + offset, enemy.gridY) then
+      if maps.testMap(map, enemy.gridX + offset, enemy.gridY) then
         enemy.gridX = enemy.gridX + offset
         enemy.lastActionTime = currentTime
-        moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY)
+        maps.moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
       end
     else
-      if testMap(map, enemy.gridX, enemy.gridY + offset) then
+      if maps.testMap(map, enemy.gridX, enemy.gridY + offset) then
         enemy.gridY = enemy.gridY + offset
         enemy.lastActionTime = currentTime
-        moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY)
+        maps.moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
       end
     end
     
@@ -60,9 +61,10 @@ function adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
   while enemiesPlaced < 10 do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
-    if (testMap(map, enemyX, enemyY)) then
-      enemies[#enemies + 1] = adversary.new(enemyX, enemyY)
-      registerEnemyMap(map, enemyX, enemyY)
+    if (maps.testMap(map, enemyX, enemyY)) then
+      local newEnemy = adversary.new(enemyX, enemyY)
+      enemies[#enemies + 1] = newEnemy
+      maps.registerEnemyMap(map, enemyX, enemyY, newEnemy)
       enemiesPlaced = enemiesPlaced + 1
     end
   end
