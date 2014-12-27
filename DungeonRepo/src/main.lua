@@ -77,3 +77,7 @@ function testMap(map, x, y)
   end
   return true
 end
+
+function registerEnemyMap(map, x, y)
+  map[y][x] = 2
+end
