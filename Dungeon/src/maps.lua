@@ -9,8 +9,7 @@ function maps.generateMap(sizeX, sizeY)
   for curX = 0,sizeX,1 do
   map[curX] = {}
     for curY = 0,sizeY,1 do 
-      isFieldFilled = math.random(0,1)
-      map[curX][curY] = isFieldFilled
+      map[curX][curY] = 1 -- default: Fill with walls
     end  
   end
   return map
