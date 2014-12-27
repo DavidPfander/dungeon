@@ -6,7 +6,8 @@ function tiles.newFloor()
     walkable = true,
     monster = {},
     loot = {},
-    type = "floor"
+    type = "floor",
+    visible = false
   }
   return newTile
 end
@@ -17,7 +18,8 @@ function tiles.newWall()
     walkable = false,
     monster = {},
     loot = {},
-    type = "wall"
+    type = "wall",
+    visible = false
   }
   return newTile
 end
