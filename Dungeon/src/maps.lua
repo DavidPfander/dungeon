@@ -26,7 +26,6 @@ function maps.generateMap(sizeX, sizeY)
     end  
   end
   
-  
   -- Now generate rooms as long as the map has not enough floor tiles
   while (maps.currentFactor < maps.fillFactor) do
     local roomLowerX = math.random(2, sizeX - 2)

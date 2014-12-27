@@ -93,10 +93,17 @@ function love.keypressed(key)
 end
 
 function testMap(map, x, y)
-  if map[x][y] == 1 then
-    return false
+  if map[x][y] == 0 or map[x][y] == 2 then
+    return true
   end
-  return true
+  return false
+end
+
+function testEnemyMap(map, x, y)
+  if map[x][y] == 0 then
+    return true
+  end
+  return false
 end
 
 function registerEnemyMap(map, x, y)
