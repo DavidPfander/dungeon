@@ -8,7 +8,11 @@ function tiles.newFloor()
     loot = {},
     type = "floor",
     visible = false,
+<<<<<<< HEAD
     hasPlayer = false
+=======
+    stairs = 0
+>>>>>>> branch 'master' of https://github.com/DavidPfander/dungeon
   }
   return newTile
 end
@@ -21,7 +25,11 @@ function tiles.newWall()
     loot = {},
     type = "wall",
     visible = false,
+<<<<<<< HEAD
     hasPlayer = false
+=======
+    stairs = 0
+>>>>>>> branch 'master' of https://github.com/DavidPfander/dungeon
   }
   return newTile
 end
