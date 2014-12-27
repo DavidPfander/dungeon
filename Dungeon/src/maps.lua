@@ -11,7 +11,7 @@ maps.numFloorTiles = 0.0
 maps.mapSize = 0.0
 maps.roomCount = 0
 
-function maps.generateMap(sizeX, sizeY)
+function maps.generate(sizeX, sizeY)
 
   local roomX local roomY
 
@@ -118,8 +118,6 @@ function maps.generateMap(sizeX, sizeY)
     maps.currentFactor = maps.numFloorTiles / maps.mapSize
   end
   
-  maps.map[curX][curY].stairs = 1
-  
   return maps.map
 end
 
@@ -164,5 +162,27 @@ function maps.movePlayer(map, oldX, oldY, x, y)
   map[x][y].hasPlayer = true
 end
 
-
+function maps.draw(map)
+  for y=1, #map do
+    for x=1, #map[y] do
+      if math.abs(x - player.gridX) <= vision and
+        math.abs(y - player.gridY) <= vision then
+      -- Tile is in vision  
+        local lighting = 30 + 15 * ((2 - math.abs(x - player.gridX)) + (2 - math.abs(y - player.gridY)))
+        love.graphics.setColor(lighting, lighting, lighting)
+        love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
+        if map[x][y].type == "floor" then
+          
+        elseif map[x][y].type == "wall" then
+          love.graphics.setColor(150,150,150)
+          love.graphics.rectangle("line", x * 32, y * 32, 32, 32)
+        end
+      else
+      -- Tile is out of vision
+        love.graphics.setColor(10, 10, 10)
+        love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
+      end    
+    end
+  end
+end
 
