@@ -39,7 +39,7 @@ function maps.generate(sizeX, sizeY)
 
   -- Now generate rooms as long as the map has not enough floor tiles
   while (maps.currentFactor < maps.fillFactor) do
---    print(level)
+    --    print(level)
     local roomLowerX = math.random(2, sizeX - 2)
     local roomLowerY = math.random(2, sizeY - 2)
 
@@ -128,7 +128,7 @@ function maps.generate(sizeX, sizeY)
   end
 
   maps.map[curX][curY] = tiles.newStairsDown()
-  
+
   return maps.map
 end
 
@@ -176,18 +176,18 @@ end
 function maps.movePlayer(map, oldX, oldY, x, y)
   map[oldX][oldY].hasPlayer = false
   map[x][y].hasPlayer = true
-  
+
   if tostring(map[x][y].type) == "stairsup" then
     maps.moveUp(x,y)
   elseif map[x][y].type == "stairsdown" then
     maps.moveDown(x,y)
   end
-  
+
   if moveUp or moveDown then
     for stairsX=1,gridSizeX,1 do
       for stairsY=1,gridSizeY,1 do
         if (moveUp and map[stairsX][stairsY].tile == "stairsdown") or
-           (moveDown and map[stairsX][stairsY].tile == "stairsup") then
+          (moveDown and map[stairsX][stairsY].tile == "stairsup") then
           map[stairsX][stairsY].hasPlayer = true
           map[oldX][oldY].hasPlayer = false
           player.gridX = x
@@ -196,7 +196,7 @@ function maps.movePlayer(map, oldX, oldY, x, y)
       end
     end
   end
-    
+
 end
 
 function maps.draw()
@@ -216,10 +216,10 @@ function maps.draw()
 
         elseif map[x][y].type == "stairsup" then
           stairsUpImage = love.graphics.newImage( "stone_stairs_up.png" )
-          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
+          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0)
         elseif map[x][y].type == "stairsdown" then
           stairsUpImage = love.graphics.newImage( "stone_stairs_down.png" )
-          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
+          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0)
         else
           print("Unknown tile type.")
         end
@@ -234,7 +234,7 @@ end
 
 function maps.moveUp(oldX, oldY)
   if level == 1 then
-  
+
   else
     level = level - 1
     map = dungeon[level]
@@ -244,7 +244,7 @@ end
 
 function maps.moveDown()
   if level == dungeonDepth then
-    
+
   else
     level = level + 1
     map = dungeon[level]

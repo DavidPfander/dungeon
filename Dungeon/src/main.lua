@@ -73,7 +73,6 @@ function love.draw()
     else
       love.graphics.print('You lost!!', 400, 300)
     end
-
   elseif moveDown then
     love.graphics.setColor(200,200,200)
     love.graphics.setFont(love.graphics.newFont(40))
