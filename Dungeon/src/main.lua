@@ -1,3 +1,5 @@
+require "maps"
+
 function love.load()
   player = {
     grid_x = 256,
@@ -21,6 +23,7 @@ function love.load()
     { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   }
+  map = maps.generateMap(14,14)
 end
 
 function love.update(dt)
