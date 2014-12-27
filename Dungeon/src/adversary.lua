@@ -20,6 +20,7 @@ function adversary.update(dt, map, enemy)
   -- move every dt > epsilon
   -- also check for actualX == pixelX
   local currentTime = love.timer.getTime()
+  local oldX, oldY = enemy.gridX, enemy.gridY
   if currentTime - enemy.lastActionTime >= 1.0 then
     offset = math.random(0, 1)
     if offset == 0 then
@@ -29,11 +30,13 @@ function adversary.update(dt, map, enemy)
       if testMap(map, enemy.gridX + offset, enemy.gridY) then
         enemy.gridX = enemy.gridX + offset
         enemy.lastActionTime = currentTime
+        moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY)
       end
     else
       if testMap(map, enemy.gridX, enemy.gridY + offset) then
         enemy.gridY = enemy.gridY + offset
         enemy.lastActionTime = currentTime
+        moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY)
       end
     end
     
