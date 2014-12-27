@@ -1,7 +1,11 @@
+require "tiles"
+
 local P = {}
 maps = P
 
 maps.fillFactor = .2 -- Percentage of floor tiles
+
+
 maps.currentFactor = 0.0
 maps.numFloorTiles = 0.0
 maps.mapSize = 0.0
@@ -22,7 +26,8 @@ function maps.generateMap(sizeX, sizeY)
   for curX = 0,sizeX,1 do
   maps.map[curX] = {}
     for curY = 0,sizeY,1 do 
-      maps.map[curX][curY] = 1 -- default: Fill with walls
+      -- default: Fill with walls
+      maps.map[curX][curY] = tiles.newWall()
     end  
   end
   
@@ -39,7 +44,7 @@ function maps.generateMap(sizeX, sizeY)
       for roomY = roomLowerY,roomLowerY + roomSizeY,1 do
         if roomX > sizeX - 1 or roomY > sizeY - 1 then
           roomValid = false
-        elseif maps.map[roomX][roomY] ~= 1 then
+        elseif maps.map[roomX][roomY].type ~= "wall" then
           roomValid = false
         end
       end
@@ -48,7 +53,7 @@ function maps.generateMap(sizeX, sizeY)
     if roomValid then
       for roomX = roomLowerX,roomLowerX + roomSizeX,1 do
         for roomY = roomLowerY,roomLowerY + roomSizeY,1 do
-          maps.map[roomX][roomY] = 0
+          maps.map[roomX][roomY] = tiles.newFloor()
         end
       end      
       maps.numFloorTiles = maps.numFloorTiles + roomSizeX * roomSizeY
@@ -62,7 +67,6 @@ function maps.generateMap(sizeX, sizeY)
 -- Place the player
       if maps.roomCount == 1 then
         player = figure.new(curX, curY)
-        maps.map[curX][curY] = 100
       end      
       
 -- If there is more then one room, make sure they are connected      
@@ -98,8 +102,8 @@ function maps.generateMap(sizeX, sizeY)
             end
           end   
              
-          if maps.map[curX][curY] == 1 then
-            maps.map[curX][curY] = 0
+          if maps.map[curX][curY].type == "wall" then
+            maps.map[curX][curY] = tiles.newFloor()
             maps.numFloorTiles = maps.numFloorTiles + 1
           end     
         end
