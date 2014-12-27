@@ -34,8 +34,9 @@ function love.load()
   }
   
   map = maps.generateMap(gridSizeX,gridSizeY)
-
+  
   gameWon = false
+
   enemies = adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
 end
 

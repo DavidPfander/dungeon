@@ -54,7 +54,6 @@ function figure.keypressed(player, key, map)
   if enemyHitMap(map, player.gridX, player.gridY) then
     removeEnemy(player.gridX, player.gridY)
   end
-
 end
 
 return figure
