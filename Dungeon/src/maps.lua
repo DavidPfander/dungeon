@@ -66,7 +66,7 @@ function maps.generateMap(sizeX, sizeY)
       
 -- Place the player
       if maps.roomCount == 1 then
-        player = figure.new(curX, curY)
+        player = players.new(curX, curY)
       end      
       
 -- If there is more then one room, make sure they are connected      

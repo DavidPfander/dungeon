@@ -1,31 +1,33 @@
 require "util"
 
 local P = {}
-figure = P
+players = P
 
-function figure.new(playerX, playerY)
-  local newFigure = {
+function players.new(playerX, playerY)
+  local newplayers = {
     gridX = playerX,
     gridY = playerY,
     actualX = 200,
     actualY = 200,
     speed = 10
   }
-  return newFigure
+  return newplayers
 end
 
-function figure.update(dt, player)
+function players.update(dt, player)
   local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
   player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
   player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
 end
 
-function figure.draw(player)
+function players.draw(player)
   love.graphics.setColor(0, 0, 255)
   love.graphics.rectangle("fill", player.actualX, player.actualY, util.pixelPerCellX, util.pixelPerCellY)
 end
 
-function figure.keypressed(player, key, map)
+function players.keypressed(player, key, map)
+
+  local hasPerformedAction = false
 
   local newX
   local newY
@@ -46,6 +48,7 @@ function figure.keypressed(player, key, map)
   if maps.testMap(map, newX, newY) then
     player.gridX = newX
     player.gridY = newY
+    hasPerformedAction = true
   else
     return
   end
@@ -54,6 +57,11 @@ function figure.keypressed(player, key, map)
   if maps.enemyHitMap(map, player.gridX, player.gridY) then
     removeEnemy(player.gridX, player.gridY)
   end
+
+  -- make sure that the enemies get a move after the player
+  if hasPerformedAction then
+    hasPlayerPerformedAction = true
+  end
 end
 
-return figure
+return players

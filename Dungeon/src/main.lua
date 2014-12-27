@@ -1,5 +1,5 @@
-require "figure"
-require "adversary"
+require "players"
+require "enemies"
 require "maps"
 require "table_save"
 
@@ -19,6 +19,8 @@ function love.load()
   gridSizeX = 16
   gridSizeY = 16
 
+  hasPlayerPerformedAction = false
+
   map = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
@@ -34,23 +36,23 @@ function love.load()
     { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   }
-  
- -- map = table.load("test.map")
-  
+
+  -- map = table.load("test.map")
+
   map = maps.generateMap(gridSizeX,gridSizeY)
-  
+
   table.save( map, "test.map")
-  
+
   gameWon = false
 
-  enemies = adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
+  enemyList = enemies.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
 end
 
 function removeEnemy(gridX, gridY)
-  for i = 1, #enemies do
-    local enemy = enemies[i]
+  for i = 1, #enemyList do
+    local enemy = enemyList[i]
     if enemy.gridX == gridX and enemy.gridY == gridY then
-      table.remove(enemies, i)
+      table.remove(enemyList, i)
       enemyCount = enemyCount - 1
       break
     end
@@ -61,9 +63,17 @@ function love.update(dt)
   if enemyCount == 0 then
     gameWon = true
   else
-    figure.update(dt, player)
-    for i = 1, #enemies do
-      adversary.update(dt, map, enemies[i])
+    players.update(dt, player)
+    -- animate the enemies
+    for i = 1, #enemyList do
+      enemies.update(dt, map, enemyList[i])
+    end
+    if hasPlayerPerformedAction then
+      -- after the players has moved, it's the enemies turn
+      for i = 1, #enemyList do
+        enemies.turn(dt, map, enemyList[i])
+      end
+      hasPlayerPerformedAction = false
     end
   end
 end
@@ -78,12 +88,12 @@ function love.draw()
       end
     end
   end
-  
-  for i = 1, #enemies do
-    adversary.draw(enemies[i])
+
+  for i = 1, #enemyList do
+    enemies.draw(enemyList[i])
   end
 
-  figure.draw(player)
+  players.draw(player)
 
   if gameWon then
     love.graphics.setFont(love.graphics.newFont(40))
@@ -95,5 +105,8 @@ function love.keypressed(key)
   if gameWon then
     return
   end
-  figure.keypressed(player, key, map)
+
+  if not hasPlayerPerformedAction then
+    players.keypressed(player, key, map)
+  end
 end
