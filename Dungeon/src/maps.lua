@@ -11,7 +11,7 @@ maps.numFloorTiles = 0.0
 maps.mapSize = 0.0
 maps.roomCount = 0
 
-function maps.generateMap(sizeX, sizeY)
+function maps.generate(sizeX, sizeY)
 
   local roomX local roomY
 
@@ -122,8 +122,11 @@ function maps.generateMap(sizeX, sizeY)
     maps.currentFactor = maps.numFloorTiles / maps.mapSize
   end
   
+<<<<<<< HEAD
   maps.map[curX][curY] = tiles.newStairsDown()
   
+=======
+>>>>>>> branch 'master' of https://github.com/DavidPfander/dungeon
   return maps.map
 end
 
@@ -199,5 +202,4 @@ function maps.draw(map)
     end
   end
 end
-
 

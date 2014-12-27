@@ -7,9 +7,9 @@ require "config"
 
 function love.load()
   hasPlayerPerformedAction = false
-  map = maps.generateMap(gridSizeX,gridSizeY)
-
   gameWon = false
+
+  map = maps.generate(gridSizeX,gridSizeY)
 
   enemyList = enemies.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
 end
