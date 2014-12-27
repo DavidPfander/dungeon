@@ -9,3 +9,5 @@ gridSizeY = 16
 
 -- Hero vision
 vision = 2
+
+dungeonDepth = 10

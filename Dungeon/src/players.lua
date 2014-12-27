@@ -17,18 +17,18 @@ function players.new(playerX, playerY)
   return newplayers
 end
 
-function players.update(dt, player)
+function players.update(dt)
   local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
   player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
   player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
 end
 
-function players.draw(player)
+function players.draw()
   love.graphics.setColor(0, 0, 255)
   love.graphics.rectangle("fill", player.actualX, player.actualY, util.pixelPerCellX, util.pixelPerCellY)
 end
 
-function players.keypressed(player, key, map)
+function players.keypressed(key)
 
   local hasPerformedAction = false
 

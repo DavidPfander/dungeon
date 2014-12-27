@@ -28,7 +28,7 @@ end
 function tiles.newStairsUp()
   local newTile = {
     walkable = true,
-    monster = {},
+    monster = nil,
     loot = {},
     type = "stairsup",
     visible = false,
@@ -40,7 +40,7 @@ end
 function tiles.newStairsDown()
   local newTile = {
     walkable = true,
-    monster = {},
+    monster = nil,
     loot = {},
     type = "stairsdown",
     visible = false,
