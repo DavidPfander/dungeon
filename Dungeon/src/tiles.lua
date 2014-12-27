@@ -4,7 +4,7 @@ tiles = P
 function tiles.newFloor()
   local newTile = {
     walkable = true,
-    monster = {},
+    monster = nil,
     loot = {},
     type = "floor",
     visible = false,
@@ -17,7 +17,7 @@ end
 function tiles.newWall()
   local newTile = {
     walkable = false,
-    monster = {},
+    monster = nil,
     loot = {},
     type = "wall",
     visible = false,

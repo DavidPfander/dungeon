@@ -1,4 +1,5 @@
 require "util"
+require "fights"
 
 local P = {}
 players = P
@@ -9,7 +10,9 @@ function players.new(playerX, playerY)
     gridY = playerY,
     actualX = 200,
     actualY = 200,
-    speed = 10
+    speed = 10,
+    health = 100,
+    damage = 20
   }
   return newplayers
 end
@@ -44,8 +47,13 @@ function players.keypressed(player, key, map)
     newX = player.gridX + 1
     newY = player.gridY
   end
-
-  if maps.test(map, newX, newY) then
+  
+    -- check whether enemy was hit
+  if maps.testEnemy(map, newX, newY) then
+    local enemy = getEnemy(map, newX, newY)
+    -- enemies.die(enemy, map)
+    fights.playerAttack(player, enemy, map)
+  elseif maps.test(map, newX, newY) then
     maps.movePlayer(map, player.gridX, player.gridY, newX, newY)
     player.gridX = newX
     player.gridY = newY
@@ -54,15 +62,16 @@ function players.keypressed(player, key, map)
     return
   end
 
-  -- check whether enemy was hit
-  if maps.enemyHit(map, player.gridX, player.gridY) then
-    removeEnemy(player.gridX, player.gridY)
-  end
+
 
   -- make sure that the enemies get a move after the player
   if hasPerformedAction then
     hasPlayerPerformedAction = true
   end
+end
+
+function players.die(player, map)
+  gameEnded = true
 end
 
 return players
