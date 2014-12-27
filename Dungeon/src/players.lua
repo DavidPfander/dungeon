@@ -45,7 +45,8 @@ function players.keypressed(player, key, map)
     newY = player.gridY
   end
 
-  if maps.testMap(map, newX, newY) then
+  if maps.test(map, newX, newY) then
+    maps.movePlayer(player.gridX, player.gridY, newX, newY)
     player.gridX = newX
     player.gridY = newY
     hasPerformedAction = true
@@ -54,7 +55,7 @@ function players.keypressed(player, key, map)
   end
 
   -- check whether enemy was hit
-  if maps.enemyHitMap(map, player.gridX, player.gridY) then
+  if maps.enemyHit(map, player.gridX, player.gridY) then
     removeEnemy(player.gridX, player.gridY)
   end
 

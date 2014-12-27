@@ -7,7 +7,8 @@ function tiles.newFloor()
     monster = {},
     loot = {},
     type = "floor",
-    visible = false
+    visible = false,
+    hasPlayer = false
   }
   return newTile
 end
@@ -19,7 +20,8 @@ function tiles.newWall()
     monster = {},
     loot = {},
     type = "wall",
-    visible = false
+    visible = false,
+    hasPlayer = false
   }
   return newTile
 end
