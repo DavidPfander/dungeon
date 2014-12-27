@@ -67,6 +67,7 @@ function maps.generateMap(sizeX, sizeY)
 -- Place the player
       if maps.roomCount == 1 then
         player = players.new(curX, curY)
+        maps.map[curX][curY].stairs = -1
       end      
       
 -- If there is more then one room, make sure they are connected      
@@ -115,15 +116,15 @@ function maps.generateMap(sizeX, sizeY)
     end
   
     maps.currentFactor = maps.numFloorTiles / maps.mapSize
-
-    print(maps.currentFactor)    
   end
+  
+  maps.map[curX][curY].stairs = 1
   
   return maps.map
 end
 
 -- Returns true if the tile is not walkable or there is a monster on the field 
-function maps.testMap(map, x, y)
+function maps.test(map, x, y)
   if map[x][y].walkable == true or next(map[x][y].monster) then
     return true
   end
@@ -131,7 +132,7 @@ function maps.testMap(map, x, y)
 end
 
 -- Returns true if there is a monster on the field
-function maps.testEnemyMap(map, x, y)
+function maps.testEnemy(map, x, y)
   if next(map[x][y].monster) then
     return true
   end
@@ -139,23 +140,28 @@ function maps.testEnemyMap(map, x, y)
 end
 
 -- Places a new monster "newMonster" on the coordinates "x","y"
-function maps.registerEnemyMap(map, x, y, newMonster)
+function maps.registerEnemy(map, x, y, newMonster)
   map[x][y].monster = newMonster
 end
 
 -- Moves the monster "movingMonster" from "oldX","oldY" to "x","y"
-function maps.moveEnemyMap(map, oldX, oldY, x, y, movingMonster)
+function maps.moveEnemy(map, oldX, oldY, x, y, movingMonster)
   map[oldX][oldY].monster = {}
   map[x][y].monster = movingMonster
 end
 
 -- Returns true iff the tile at "x","y" is not walkable
-function maps.enemyHitMap(map, x, y)
+function maps.enemyHit(map, x, y)
   if map[x][y].isWalkable == true then
     return false
   else
     return true
   end
+end
+
+function maps.movePlayer(map, oldX, oldY, x, y)
+  map[oldX][oldY].hasPlayer = false
+  map[x][y].hasPlayer = true
 end
 
 function maps.draw(map)
@@ -177,8 +183,7 @@ function maps.draw(map)
       -- Tile is out of vision
         love.graphics.setColor(10, 10, 10)
         love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
-      end
-      
+      end    
     end
   end
 end
