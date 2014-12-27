@@ -1,5 +1,6 @@
 require "figure"
 require "adversary"
+require "maps"
 
 function love.load()
   --    player = {
@@ -9,6 +10,12 @@ function love.load()
   --        act_y = 200,
   --        speed = 10
   --    }
+
+
+  -- place enemy
+  enemyCount = 10
+  gridSizeX = 16
+  gridSizeY = 16
 
   map = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -25,14 +32,10 @@ function love.load()
     { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   }
+  
+  map = maps.generateMap(gridSizeX,gridSizeY)
 
-  -- place player
-  player = figure.new()
 
-  -- place enemy
-  enemyCount = 10
-  gridSizeX = 13
-  gridSizeY = 13
   enemies = adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
 end
 

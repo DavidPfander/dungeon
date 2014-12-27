@@ -3,10 +3,10 @@ require "util"
 local P = {}
 figure = P
 
-function figure.new()
+function figure.new(playerX, playerY)
   local newFigure = {
-    gridX = 8,
-    gridY = 8,
+    gridX = playerX,
+    gridY = playerY,
     actualX = 200,
     actualY = 200,
     speed = 10
