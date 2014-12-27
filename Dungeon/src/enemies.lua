@@ -30,13 +30,13 @@ function enemies.turn(dt, map, enemy)
     offset = -1
   end
   if math.random() > 0.5 then
-    if maps.test(map, enemy.gridX + offset, enemy.gridY) then
+    if maps.test(map, enemy.gridX + offset, enemy.gridY) and not map[enemy.gridX + offset][enemy.gridY].hasPlayer then
       enemy.gridX = enemy.gridX + offset
       enemy.lastActionTime = currentTime
       maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
     end
   else
-    if maps.test(map, enemy.gridX, enemy.gridY + offset) then
+    if maps.test(map, enemy.gridX, enemy.gridY + offset) and not map[enemy.gridX][enemy.gridY + offset].hasPlayer then
       enemy.gridY = enemy.gridY + offset
       enemy.lastActionTime = currentTime
       maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
@@ -58,7 +58,7 @@ function enemies.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
   while enemiesPlaced < enemyCount do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
-    if (maps.test(map, enemyX, enemyY)) then
+    if (maps.test(map, enemyX, enemyY)) and not map[enemyX][enemyY].hasPlayer then
       local newEnemy = enemies.new(enemyX, enemyY)
       enemyList[#enemyList + 1] = newEnemy
       maps.registerEnemy(map, enemyX, enemyY, newEnemy)
