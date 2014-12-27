@@ -13,6 +13,11 @@ maps.roomCount = 0
 
 function maps.generate(sizeX, sizeY)
 
+  maps.currentFactor = 0.0
+  maps.numFloorTiles = 0.0
+  maps.mapSize = 0.0
+  maps.roomCount = 0
+
   local roomX local roomY
 
   if sizeX < 5 or sizeY < 5 then
@@ -21,7 +26,6 @@ function maps.generate(sizeX, sizeY)
   end
 
   maps.map = {}
-  math.randomseed(os.time())
   maps.mapSize = sizeX * sizeY
   for curX = 0,sizeX,1 do
   maps.map[curX] = {}
@@ -35,6 +39,7 @@ function maps.generate(sizeX, sizeY)
   
   -- Now generate rooms as long as the map has not enough floor tiles
   while (maps.currentFactor < maps.fillFactor) do
+--    print(level)
     local roomLowerX = math.random(2, sizeX - 2)
     local roomLowerY = math.random(2, sizeY - 2)
     
@@ -68,7 +73,7 @@ function maps.generate(sizeX, sizeY)
       curY = roomY 
       
 -- Place the player
-      if maps.roomCount == 1 then
+      if maps.roomCount == 1 and level == 1 then
         player = players.new(curX, curY)
         maps.map[curX][curY] = tiles.newStairsUp()
         maps.map[curX][curY].hasPlayer = true
@@ -122,11 +127,8 @@ function maps.generate(sizeX, sizeY)
     maps.currentFactor = maps.numFloorTiles / maps.mapSize
   end
   
-<<<<<<< HEAD
   maps.map[curX][curY] = tiles.newStairsDown()
   
-=======
->>>>>>> branch 'master' of https://github.com/DavidPfander/dungeon
   return maps.map
 end
 
@@ -169,9 +171,30 @@ end
 function maps.movePlayer(map, oldX, oldY, x, y)
   map[oldX][oldY].hasPlayer = false
   map[x][y].hasPlayer = true
+  
+  if tostring(map[x][y].type) == "stairsup" then
+    maps.moveUp(x,y)
+  elseif map[x][y].type == "stairsdown" then
+    maps.moveDown(x,y)
+  end
+  
+  if moveUp or moveDown then
+    for stairsX=1,gridSizeX,1 do
+      for stairsY=1,gridSizeY,1 do
+        if (moveUp and map[stairsX][stairsY].tile == "stairsdown") or
+           (moveDown and map[stairsX][stairsY].tile == "stairsup") then
+          map[stairsX][stairsY].hasPlayer = true
+          map[oldX][oldY].hasPlayer = false
+          player.gridX = x
+          player.gridY = y
+        end
+      end
+    end
+  end
+    
 end
 
-function maps.draw(map)
+function maps.draw()
   for y=1, #map do
     for x=1, #map[y] do
       if math.abs(x - player.gridX) <= vision and
@@ -188,9 +211,10 @@ function maps.draw(map)
         
         elseif map[x][y].type == "stairsup" then
           stairsUpImage = love.graphics.newImage( "stone_stairs_up.png" )
-          love.graphics.draw(stairsUpImage, x, y, 0, 1, 1, 0, 0) 
+          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
         elseif map[x][y].type == "stairsdown" then
-        
+          stairsUpImage = love.graphics.newImage( "stone_stairs_down.png" )
+          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
         else
           print("Unknown tile type.")
         end
@@ -203,3 +227,22 @@ function maps.draw(map)
   end
 end
 
+function maps.moveUp(oldX, oldY)
+  if level == 1 then
+  
+  else
+    level = level - 1
+    map = dungeon[level]
+    moveUp = true
+  end
+end
+
+function maps.moveDown()
+  if level == dungeonDepth then
+    
+  else
+    level = level + 1
+    map = dungeon[level]
+    moveDown = true
+  end
+end

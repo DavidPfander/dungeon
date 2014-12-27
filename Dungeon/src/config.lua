@@ -7,5 +7,8 @@ enemyCount = 10
 gridSizeX = 16
 gridSizeY = 16
 
+-- Depth
+dungeonDepth = 42
+
 -- Hero vision
 vision = 2

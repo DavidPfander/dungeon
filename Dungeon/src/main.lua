@@ -4,13 +4,19 @@ require "maps"
 require "table_save"
 require "config"
 
-
 function love.load()
+
+  math.randomseed(os.time())
   hasPlayerPerformedAction = false
   gameWon = false
+  dungeon = {}
+  for clevel=1,dungeonDepth do
+    level = clevel
+    dungeon[clevel] = maps.generate(gridSizeX, gridSizeY)
+  end
 
-  map = maps.generate(gridSizeX,gridSizeY)
-
+  map = dungeon[1]
+  level = 1
   enemyList = enemies.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
 end
 
@@ -29,7 +35,7 @@ function love.update(dt)
   if enemyCount == 0 then
     gameWon = true
   else
-    players.update(dt, player)
+    players.update(dt)
     -- animate the enemies
     for i = 1, #enemyList do
       enemies.update(dt, map, enemyList[i])
@@ -45,17 +51,27 @@ function love.update(dt)
 end
 
 function love.draw()
-  maps.draw(map, vision)
+  maps.draw()
 
   for i = 1, #enemyList do
     enemies.draw(enemyList[i])
   end
 
-  players.draw(player)
+  players.draw()
 
   if gameWon then
     love.graphics.setFont(love.graphics.newFont(40))
     love.graphics.print('You win!!', 400, 300)
+  elseif moveDown then
+    love.graphics.setColor(200,200,200)
+    love.graphics.setFont(love.graphics.newFont(40))
+    love.graphics.print("Deeper into darkness...", 400, 300)
+    moveDown = false
+  elseif moveUp then
+    love.graphics.setColor(200,200,200)
+    love.graphics.setFont(love.graphics.newFont(40))
+    love.graphics.print("Out of this hellhole...", 400, 300)
+    moveUp = false
   end
 end
 
@@ -65,6 +81,6 @@ function love.keypressed(key)
   end
 
   if not hasPlayerPerformedAction then
-    players.keypressed(player, key, map)
+    players.keypressed(key)
   end
 end
