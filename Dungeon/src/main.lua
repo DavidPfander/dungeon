@@ -1,6 +1,8 @@
 require "figure"
 require "adversary"
 require "maps"
+require "table_save"
+
 
 function love.load()
   --    player = {
@@ -33,7 +35,11 @@ function love.load()
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
   }
   
+ -- map = table.load("test.map")
+  
   map = maps.generateMap(gridSizeX,gridSizeY)
+  
+  table.save( map, "test.map")
 
 
   enemies = adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
@@ -50,7 +56,7 @@ function love.draw()
   love.graphics.setColor(255, 255, 255)
   for y=1, #map do
     for x=1, #map[y] do
-      if map[y][x] == 1 then
+      if map[x][y].type == "wall" then
         love.graphics.rectangle("line", x * 32, y * 32, 32, 32)
       end
     end
