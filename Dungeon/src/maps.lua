@@ -117,7 +117,7 @@ function maps.generateMap(sizeX, sizeY)
   
     maps.currentFactor = maps.numFloorTiles / maps.mapSize
 
-    print(maps.currentFactor)    
+    -- print(maps.currentFactor)    
   end
   
   return maps.map

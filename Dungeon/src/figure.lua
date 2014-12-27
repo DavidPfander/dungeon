@@ -21,28 +21,38 @@ function figure.update(dt, player)
 end
 
 function figure.draw(player)
-  local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
   love.graphics.setColor(0, 0, 255)
-  love.graphics.rectangle("fill", pixelX, pixelY, util.pixelPerCellX, util.pixelPerCellY)
+  love.graphics.rectangle("fill", player.actualX, player.actualY, util.pixelPerCellX, util.pixelPerCellY)
 end
 
 function figure.keypressed(player, key, map)
+
+  local newX
+  local newY
   if key == "up" then
-    if testMap(map, player.gridX, player.gridY - 1) then
-      player.gridY = player.gridY - 1
-    end
+    newX = player.gridX
+    newY = player.gridY - 1
   elseif key == "down" then
-    if testMap(map, player.gridX, player.gridY + 1) then
-      player.gridY = player.gridY + 1
-    end
+    newX = player.gridX
+    newY = player.gridY + 1
   elseif key == "left" then
-    if testMap(map, player.gridX - 1, player.gridY) then
-      player.gridX = player.gridX - 1
-    end
+    newX = player.gridX - 1
+    newY = player.gridY
   elseif key == "right" then
-    if testMap(map, player.gridX + 1, player.gridY) then
-      player.gridX = player.gridX + 1
-    end
+    newX = player.gridX + 1
+    newY = player.gridY
+  end
+
+  if testMap(map, newX, newY) then
+    player.gridX = newX
+    player.gridY = newY
+  else
+    return
+  end
+
+  -- check whether enemy was hit
+  if enemyHitMap(map, player.gridX, player.gridY) then
+    removeEnemy(player.gridX, player.gridY)
   end
 end
 

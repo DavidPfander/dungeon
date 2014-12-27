@@ -10,30 +10,51 @@ function adversary.new(gridX, gridY)
     gridY = gridY,
     actualX = pixelX,
     actualY = pixelY,
-    speed = 10
+    speed = 10,
+    lastActionTime = love.timer.getTime()
   }
   return newadversary
 end
 
-function adversary.update(dt, player)
+function adversary.update(dt, map, enemy)
   -- move every dt > epsilon
   -- also check for actualX == pixelX
-  -- TODO
-  
-  local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
-  player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
-  player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
+  local currentTime = love.timer.getTime()
+  local oldX, oldY = enemy.gridX, enemy.gridY
+  if currentTime - enemy.lastActionTime >= 1.0 then
+    offset = math.random(0, 1)
+    if offset == 0 then
+      offset = -1
+    end
+    if math.random() > 0.5 then
+      if testMap(map, enemy.gridX + offset, enemy.gridY) then
+        enemy.gridX = enemy.gridX + offset
+        enemy.lastActionTime = currentTime
+        moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY)
+      end
+    else
+      if testMap(map, enemy.gridX, enemy.gridY + offset) then
+        enemy.gridY = enemy.gridY + offset
+        enemy.lastActionTime = currentTime
+        moveEnemyMap(map, oldX, oldY, enemy.gridX, enemy.gridY)
+      end
+    end
+    
+  end
+
+  local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
+  enemy.actualY = enemy.actualY - ((enemy.actualY - pixelY) * enemy.speed * dt)
+  enemy.actualX = enemy.actualX - ((enemy.actualX - pixelX) * enemy.speed * dt)
 end
 
-function adversary.draw(player)
-  local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
-  oldColor = love.graphics.getColor()
+function adversary.draw(enemy)
+  -- local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
   love.graphics.setColor(255, 0, 0)
-  love.graphics.rectangle("fill", pixelX, pixelY, util.pixelPerCellX, util.pixelPerCellY)
+  love.graphics.rectangle("fill", enemy.actualX, enemy.actualY, util.pixelPerCellX, util.pixelPerCellY)
   -- love.graphics.setColor(oldColor)
 end
 
-function adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY) 
+function adversary.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
   local enemies = {}
   local enemiesPlaced = 0
   while enemiesPlaced < 10 do
