@@ -39,7 +39,6 @@ function maps.generate(sizeX, sizeY)
   
   -- Now generate rooms as long as the map has not enough floor tiles
   while (maps.currentFactor < maps.fillFactor) do
---    print(level)
     local roomLowerX = math.random(2, sizeX - 2)
     local roomLowerY = math.random(2, sizeY - 2)
     
@@ -73,10 +72,12 @@ function maps.generate(sizeX, sizeY)
       curY = roomY 
       
 -- Place the player
-      if maps.roomCount == 1 and level == 1 then
-        player = players.new(curX, curY)
+      if maps.roomCount == 1 then
+        if level == 1 then
+          player = players.new(curX, curY)
+          maps.map[curX][curY].hasPlayer = true
+        end
         maps.map[curX][curY] = tiles.newStairsUp()
-        maps.map[curX][curY].hasPlayer = true
       end      
       
 -- If there is more then one room, make sure they are connected      
@@ -168,7 +169,7 @@ function maps.enemyHit(map, x, y)
   end
 end
 
-function maps.movePlayer(map, oldX, oldY, x, y)
+function maps.movePlayer(oldX, oldY, x, y)
   map[oldX][oldY].hasPlayer = false
   map[x][y].hasPlayer = true
   
@@ -181,26 +182,33 @@ function maps.movePlayer(map, oldX, oldY, x, y)
   if moveUp or moveDown then
     for stairsX=1,gridSizeX,1 do
       for stairsY=1,gridSizeY,1 do
-        if (moveUp and map[stairsX][stairsY].tile == "stairsdown") or
-           (moveDown and map[stairsX][stairsY].tile == "stairsup") then
+        if (moveUp and (tostring(map[stairsX][stairsY].type) == "stairsdown")) or
+           (moveDown and (tostring(map[stairsX][stairsY].type) == "stairsup")) then
           map[stairsX][stairsY].hasPlayer = true
           map[oldX][oldY].hasPlayer = false
-          player.gridX = x
-          player.gridY = y
+          player.gridX = stairsX
+          player.gridY = stairsY
         end
       end
     end
   end
+  
+  moveUp = false
+  moveDown = false
     
 end
 
 function maps.draw()
   for y=1, #map do
     for x=1, #map[y] do
-      if math.abs(x - player.gridX) <= vision and
-        math.abs(y - player.gridY) <= vision then
-      -- Tile is in vision  
-        local lighting = 30 + 15 * ((2 - math.abs(x - player.gridX)) + (2 - math.abs(y - player.gridY)))
+      local distance = math.sqrt(
+        math.abs(x - player.gridX) * math.abs(x - player.gridX) +
+        math.abs(y - player.gridY) * math.abs(y - player.gridY))
+      if distance <= vision then
+      -- Now check if there is a wall inbetween
+          
+        -- Tile is in vision  
+        local lighting = 10 * (vision - distance)
         love.graphics.setColor(lighting, lighting, lighting)
         love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
         if map[x][y].type == "floor" then

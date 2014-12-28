@@ -46,9 +46,9 @@ function players.keypressed(key)
   end
 
   if maps.test(map, newX, newY) then
-    maps.movePlayer(map, player.gridX, player.gridY, newX, newY)
     player.gridX = newX
     player.gridY = newY
+    maps.movePlayer(player.gridX, player.gridY, newX, newY)
     hasPerformedAction = true
   else
     return
