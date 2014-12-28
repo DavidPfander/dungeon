@@ -205,32 +205,55 @@ end
 function maps.draw()
   for y=1, #map do
     for x=1, #map[y] do
+      local distanceX = math.abs(x - player.gridX)
+      local distanceY = math.abs(y - player.gridY)
       local distance = math.sqrt(
-        math.abs(x - player.gridX) * math.abs(x - player.gridX) +
-        math.abs(y - player.gridY) * math.abs(y - player.gridY))
+        distanceX * distanceX +
+        distanceY * distanceY)
       if distance <= vision then
-      -- Now check if there is a visible   
-        -- Tile is in vision  
-        local lighting = 10 + 15 * (vision - distance)
-        love.graphics.setColor(lighting, lighting, lighting)
-        love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
-        if map[x][y].type == "floor" then
-          
-        elseif map[x][y].type == "wall" then
-          love.graphics.setColor(150,150,150)
-          love.graphics.rectangle("line", x * 32, y * 32, 32, 32)
+        -- Now check if there is a clear path to the tile
+        local visible = true
         
-        elseif map[x][y].type == "stairsup" then
-          stairsUpImage = love.graphics.newImage( "stone_stairs_up.png" )
-          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
-        elseif map[x][y].type == "stairsdown" then
-          stairsUpImage = love.graphics.newImage( "stone_stairs_down.png" )
-          love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
+        local visionPathX = player.gridX
+        local visionPathY = player.gridY
+        local factor = 1.0
+        while(math.abs(visionPathX - x) > 1) do
+          visionPathX = util.round(player.gridX + (factor * (x - player.gridX)) / distance)
+          visionPathY = util.round(player.gridY + (factor * (y - player.gridY)) / distance)
+          print (visionPathX .. " " .. visionPathY)
+          if map[util.round(visionPathX)][util.round(visionPathY)].type == "wall" then
+            visible = false
+          end
+          factor = factor + 1.0
+        end 
+        
+        if visible then
+          -- Tile is in vision  
+          local lighting = 10 + 15 * (vision - distance)
+          love.graphics.setColor(lighting, lighting, lighting)
+          love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
+          if map[x][y].type == "floor" then
+            
+          elseif map[x][y].type == "wall" then
+            love.graphics.setColor(150,150,150)
+            love.graphics.rectangle("line", x * 32, y * 32, 32, 32)
+          
+          elseif map[x][y].type == "stairsup" then
+            stairsUpImage = love.graphics.newImage( "stone_stairs_up.png" )
+            love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
+          elseif map[x][y].type == "stairsdown" then
+            stairsUpImage = love.graphics.newImage( "stone_stairs_down.png" )
+            love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0) 
+          else
+            print("Unknown tile type.")
+          end
         else
-          print("Unknown tile type.")
+          -- Tile is out of vision
+          love.graphics.setColor(10, 10, 10)
+          love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
         end
       else
-      -- Tile is out of vision
+        -- Tile is out of vision
         love.graphics.setColor(10, 10, 10)
         love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
       end    
