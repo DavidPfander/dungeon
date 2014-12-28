@@ -77,12 +77,10 @@ function love.draw()
     love.graphics.setColor(200,200,200)
     love.graphics.setFont(love.graphics.newFont(40))
     love.graphics.print("Deeper into darkness...", 400, 300)
-    moveDown = false
   elseif moveUp then
     love.graphics.setColor(200,200,200)
     love.graphics.setFont(love.graphics.newFont(40))
     love.graphics.print("Out of this hellhole...", 400, 300)
-    moveUp = false
   end
 end
 

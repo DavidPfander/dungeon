@@ -11,4 +11,4 @@ gridSizeY = 16
 dungeonDepth = 42
 
 -- Hero vision
-vision = 4
+vision = 5
