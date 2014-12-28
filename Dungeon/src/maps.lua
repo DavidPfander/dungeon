@@ -73,8 +73,13 @@ function maps.generate(sizeX, sizeY)
       curY = roomY
 
       -- Place the player
-      if maps.roomCount == 1 and level == 1 then
+      if level == 1 then
         player = players.new(curX, curY)
+        maps.map[curX][curY].hasPlayer = true
+      end
+      
+      -- Place stairs up
+      if maps.roomCount == 1 and level ~= 1 then
         maps.map[curX][curY] = tiles.newStairsUp()
         maps.map[curX][curY].hasPlayer = true
       end
@@ -175,7 +180,6 @@ end
 
 function maps.movePlayer(oldX, oldY, x, y)
   map[oldX][oldY].hasPlayer = false
-  map[x][y].hasPlayer = true
 
   if tostring(map[x][y].type) == "stairsup" then
     maps.moveUp(x,y)
@@ -186,15 +190,18 @@ function maps.movePlayer(oldX, oldY, x, y)
   if moveUp or moveDown then
     for stairsX=1,gridSizeX,1 do
       for stairsY=1,gridSizeY,1 do
-        if (moveUp and (tostring(map[stairsX][stairsY].type) == "stairsdown")) or
-           (moveDown and (tostring(map[stairsX][stairsY].type) == "stairsup")) then
+        if (moveUp and map[stairsX][stairsY].type == "stairsdown") or
+           (moveDown and map[stairsX][stairsY].type == "stairsup") then
           map[stairsX][stairsY].hasPlayer = true
-          map[oldX][oldY].hasPlayer = false
           player.gridX = stairsX
           player.gridY = stairsY
         end
       end
     end
+  else
+    player.gridX = x
+    player.gridY = y
+    map[x][y].hasPlayer = true
   end
 
   moveUp = false
@@ -205,35 +212,23 @@ end
 function maps.draw()
   for y=1, #map do
     for x=1, #map[y] do
-
-      local distance = math.sqrt(
-        math.abs(x - player.gridX) * math.abs(x - player.gridX) +
-        math.abs(y - player.gridY) * math.abs(y - player.gridY))
-      if distance <= vision then
-      -- Now check if there is a visible   
-        -- Tile is in vision
-        local lighting = 10 + 15 * (vision - distance)
-        love.graphics.setColor(lighting, lighting, lighting)
-        love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
+      local lighting = util.getTileLighting(x, y)
+      love.graphics.setColor(lighting, lighting, lighting)
+      love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
+      
+      if lighting ~= 0 then
         if map[x][y].type == "floor" then
-
+  
         elseif map[x][y].type == "wall" then
           love.graphics.setColor(150,150,150)
           love.graphics.rectangle("line", x * 32, y * 32, 32, 32)
-
         elseif map[x][y].type == "stairsup" then
           stairsUpImage = love.graphics.newImage( "stone_stairs_up.png" )
           love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0)
         elseif map[x][y].type == "stairsdown" then
           stairsUpImage = love.graphics.newImage( "stone_stairs_down.png" )
           love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0)
-        else
-          print("Unknown tile type.")
         end
-      else
-        -- Tile is out of vision
-        love.graphics.setColor(10, 10, 10)
-        love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
       end
     end
   end

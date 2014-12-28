@@ -74,7 +74,7 @@ function enemies.draw(enemy)
     return
   end
 
-  local lighting = util.getCellLighting(enemy.gridX, enemy.gridY)
+  local lighting = util.getEnemyLighting(enemy.gridX, enemy.gridY)
 
   love.graphics.setColor(lighting, lighting, lighting)
   -- love.graphics.setColor(255, 255, 255)
