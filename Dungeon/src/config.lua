@@ -12,3 +12,7 @@ dungeonDepth = 42
 
 -- Hero vision
 vision = 5
+
+fullscreen = false
+
+saveFileName = "dugeon.sav"
