@@ -81,9 +81,9 @@ function enemies.draw(enemy)
   --love.graphics.setColor(255, 0, 0)
   -- love.graphics.rectangle("fill", enemy.actualX, enemy.actualY, util.pixelPerCellX, util.pixelPerCellY)
   local goblinImage = love.graphics.newImage(enemy.picture)
-  local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
+  -- local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
   -- love.graphics.draw(goblinImage, pixelX, pixelY, 0, 1, 1, 0, 0)
-  love.graphics.draw(goblinImage, pixelX, pixelY)
+  love.graphics.draw(goblinImage, enemy.actualX, enemy.actualY)
   -- love.graphics.setColor(oldColor)
 end
 

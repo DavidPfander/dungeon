@@ -25,8 +25,12 @@ function players.update(dt)
 end
 
 function players.draw()
-  love.graphics.setColor(0, 0, 255)
-  love.graphics.rectangle("fill", player.actualX, player.actualY, util.pixelPerCellX, util.pixelPerCellY)
+  local lighting = util.getEnemyLighting(player.gridX, player.gridY)
+  love.graphics.setColor(lighting, lighting, lighting)
+
+  -- love.graphics.rectangle("fill", player.actualX, player.actualY, util.pixelPerCellX, util.pixelPerCellY)
+  local heroImage = love.graphics.newImage("hero.png")
+  love.graphics.draw(heroImage, player.actualX, player.actualY)
 end
 
 function players.keypressed(key)
