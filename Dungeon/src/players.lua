@@ -55,8 +55,6 @@ function players.keypressed(key)
     fights.playerAttack(player, enemy, map)
     hasPerformedAction = true
   elseif maps.test(map, newX, newY) then
-    player.gridX = newX
-    player.gridY = newY
     maps.movePlayer(player.gridX, player.gridY, newX, newY)
     hasPerformedAction = true
   else
