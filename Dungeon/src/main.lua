@@ -12,11 +12,23 @@ function love.load()
   hasPlayerPerformedAction = false
   gameEnded = false
   gameWon = false
+
   running = false
   
   
   
   menu.generateMainMenu()
+
+  dungeon = {}
+  
+  for clevel=1,dungeonDepth do
+    level = clevel
+    dungeon[clevel] = maps.generate(gridSizeX, gridSizeY)
+  end
+
+  map = dungeon[1]
+  level = 1
+  enemies.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
 end
 
 function getEnemy(map, gridX, gridY)
