@@ -28,24 +28,25 @@ function maps.generate(sizeX, sizeY)
   maps.map = {}
   maps.mapSize = sizeX * sizeY
   for curX = 0,sizeX,1 do
-  maps.map[curX] = {}
-    for curY = 0,sizeY,1 do 
+    maps.map[curX] = {}
+    for curY = 0,sizeY,1 do
       -- default: Fill with walls
       maps.map[curX][curY] = tiles.newWall()
-    end  
+    end
   end
-  
+
   local curX local curY
-  
+
   -- Now generate rooms as long as the map has not enough floor tiles
   while (maps.currentFactor < maps.fillFactor) do
+    --    print(level)
     local roomLowerX = math.random(2, sizeX - 2)
     local roomLowerY = math.random(2, sizeY - 2)
-    
+
     local roomSizeX = math.random(1,5)
     local roomSizeY = math.random(1,5)
-    
-    
+
+
     local roomValid = true
     for roomX = roomLowerX,roomLowerX + roomSizeX,1 do
       for roomY = roomLowerY,roomLowerY + roomSizeY,1 do
@@ -56,34 +57,32 @@ function maps.generate(sizeX, sizeY)
         end
       end
     end
-    
+
     if roomValid then
       for roomX = roomLowerX,roomLowerX + roomSizeX,1 do
         for roomY = roomLowerY,roomLowerY + roomSizeY,1 do
           maps.map[roomX][roomY] = tiles.newFloor()
         end
-      end      
+      end
       maps.numFloorTiles = maps.numFloorTiles + roomSizeX * roomSizeY
-      
+
       maps.roomCount = maps.roomCount + 1
       roomX = math.random(roomLowerX, roomLowerX + roomSizeX)
       roomY = math.random(roomLowerY, roomLowerY + roomSizeY)
-      curX = roomX 
-      curY = roomY 
-      
--- Place the player
-      if maps.roomCount == 1 then
-        if level == 1 then
-          player = players.new(curX, curY)
-          maps.map[curX][curY].hasPlayer = true
-        end
+      curX = roomX
+      curY = roomY
+
+      -- Place the player
+      if maps.roomCount == 1 and level == 1 then
+        player = players.new(curX, curY)
         maps.map[curX][curY] = tiles.newStairsUp()
-      end      
-      
--- If there is more then one room, make sure they are connected      
+        maps.map[curX][curY].hasPlayer = true
+      end
+
+      -- If there is more then one room, make sure they are connected
       if maps.roomCount > 1 then
         while(maps.oldRoomX ~= curX or maps.oldRoomY ~= curY) do
-        
+
           if maps.oldRoomX == curX then
             if maps.oldRoomY > curY then
               curY = curY + 1
@@ -111,38 +110,34 @@ function maps.generate(sizeX, sizeY)
                 curY = curY - 1
               end
             end
-          end   
-             
+          end
+
           if maps.map[curX][curY].type == "wall" then
             maps.map[curX][curY] = tiles.newFloor()
             maps.numFloorTiles = maps.numFloorTiles + 1
-          end     
+          end
         end
       end
 
       maps.oldRoomX = roomX
       maps.oldRoomY = roomY
-      
+
     end
-  
+
     maps.currentFactor = maps.numFloorTiles / maps.mapSize
   end
-  
+
   maps.map[curX][curY] = tiles.newStairsDown()
-  
+
   return maps.map
 end
 
--- Returns true if the tile is not walkable or there is a monster on the field 
+-- Returns true if the tile is not walkable or there is a monster on the field
 function maps.test(map, x, y)
   if map[x][y].walkable == true or map[x][y].monster ~= nil then
     return true
   end
   return false
-end
-
-function maps.removeEnemy(map, x, y, enemy)
-  map[x][y].monster = nil
 end
 
 -- Returns true if there is a monster on the field
@@ -156,6 +151,11 @@ end
 -- Places a new monster "newMonster" on the coordinates "x","y"
 function maps.registerEnemy(map, x, y, newMonster)
   map[x][y].monster = newMonster
+end
+
+-- Places a new monster "newMonster" on the coordinates "x","y"
+function maps.removeEnemy(map, x, y, enemy)
+  map[x][y].monster = nil
 end
 
 -- Moves the monster "movingMonster" from "oldX","oldY" to "x","y"
@@ -176,13 +176,13 @@ end
 function maps.movePlayer(oldX, oldY, x, y)
   map[oldX][oldY].hasPlayer = false
   map[x][y].hasPlayer = true
-  
+
   if tostring(map[x][y].type) == "stairsup" then
     maps.moveUp(x,y)
   elseif map[x][y].type == "stairsdown" then
     maps.moveDown(x,y)
   end
-  
+
   if moveUp or moveDown then
     for stairsX=1,gridSizeX,1 do
       for stairsY=1,gridSizeY,1 do
@@ -196,7 +196,7 @@ function maps.movePlayer(oldX, oldY, x, y)
       end
     end
   end
-  
+
   moveUp = false
   moveDown = false
     
@@ -212,15 +212,15 @@ function maps.draw()
         distanceY * distanceY)
       if distance <= vision then
         -- Now check if there is a clear path to the tile
-        local visible = true
         
+        local visible = true
         local visionPathX = player.gridX
         local visionPathY = player.gridY
         local factor = 1.0
-        while(math.abs(visionPathX - x) > 1) do
+        
+        while(math.abs(visionPathX - x) > 1 or math.abs(visionPathY - y) > 1) do
           visionPathX = util.round(player.gridX + (factor * (x - player.gridX)) / distance)
           visionPathY = util.round(player.gridY + (factor * (y - player.gridY)) / distance)
-          print (visionPathX .. " " .. visionPathY)
           if map[util.round(visionPathX)][util.round(visionPathY)].type == "wall" then
             visible = false
           end
@@ -247,6 +247,23 @@ function maps.draw()
           else
             print("Unknown tile type.")
           end
+          
+          local lighting = 10 + 15 * (vision - distance)
+          love.graphics.setColor(lighting, lighting, lighting)
+          love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
+          if map[x][y].type == "floor" then
+  
+          elseif map[x][y].type == "wall" then
+            love.graphics.setColor(150,150,150)
+            love.graphics.rectangle("line", x * 32, y * 32, 32, 32)
+  
+          elseif map[x][y].type == "stairsup" then
+            stairsUpImage = love.graphics.newImage( "stone_stairs_up.png" )
+            love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0)
+          elseif map[x][y].type == "stairsdown" then
+            stairsUpImage = love.graphics.newImage( "stone_stairs_down.png" )
+            love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0)
+          end
         else
           -- Tile is out of vision
           love.graphics.setColor(10, 10, 10)
@@ -256,14 +273,14 @@ function maps.draw()
         -- Tile is out of vision
         love.graphics.setColor(10, 10, 10)
         love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
-      end    
+      end
     end
   end
 end
 
 function maps.moveUp(oldX, oldY)
   if level == 1 then
-  
+
   else
     level = level - 1
     map = dungeon[level]
@@ -273,7 +290,7 @@ end
 
 function maps.moveDown()
   if level == dungeonDepth then
-    
+
   else
     level = level + 1
     map = dungeon[level]
