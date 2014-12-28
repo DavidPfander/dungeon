@@ -5,7 +5,7 @@ function tiles.newFloor()
   local newTile = {
     walkable = true,
     monster = nil,
-    loot = {},
+    items = {},
     type = "floor",
     visible = false,
     hasPlayer = false
@@ -17,7 +17,7 @@ function tiles.newWall()
   local newTile = {
     walkable = false,
     monster = nil,
-    loot = {},
+    items = {},
     type = "wall",
     visible = false,
     hasPlayer = false
@@ -41,7 +41,7 @@ function tiles.newStairsDown()
   local newTile = {
     walkable = true,
     monster = nil,
-    loot = {},
+    items = {},
     type = "stairsdown",
     visible = false,
     hasPlayer = false

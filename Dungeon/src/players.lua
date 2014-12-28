@@ -5,6 +5,10 @@ require "console"
 local P = {}
 players = P
 
+local playerStatsOriginX = 550
+local playerStatsOriginY = 400
+local playerStatsFontSize = 15
+
 function players.new(playerX, playerY)
   local newplayers = {
     gridX = playerX,
@@ -13,7 +17,10 @@ function players.new(playerX, playerY)
     actualY = 200,
     speed = 10,
     health = 100,
-    damage = 20
+    damage = 20,
+    armor = 0,
+    items = {helmet = nil, chestArmor = nil, weapon = nil}
+    
   }
   return newplayers
 end
@@ -31,6 +38,17 @@ function players.draw()
   -- love.graphics.rectangle("fill", player.actualX, player.actualY, util.pixelPerCellX, util.pixelPerCellY)
   local heroImage = love.graphics.newImage("hero.png")
   love.graphics.draw(heroImage, player.actualX, player.actualY)
+
+  -- draw stats
+  love.graphics.setColor(100, 150, 100)
+  love.graphics.rectangle("line", playerStatsOriginX , playerStatsOriginY, 245, 195)
+
+  love.graphics.setColor(150, 200, 150)
+  love.graphics.setFont(love.graphics.newFont(fontSize))
+  
+  love.graphics.print("health: " .. player.health, playerStatsOriginX + 5, playerStatsOriginY + 5)
+  love.graphics.print("damage: " .. player.damage, playerStatsOriginX + 5, playerStatsOriginY + 5 + 20)
+  love.graphics.print("armor: " .. player.armor, playerStatsOriginX + 5, playerStatsOriginY + 5 + 40)
 end
 
 function players.keypressed(key)
@@ -59,14 +77,12 @@ function players.keypressed(key)
     -- enemies.die(enemy, map)
     fights.playerAttack(player, enemy, map)
     hasPerformedAction = true
-  elseif maps.test(map, newX, newY) then
+  elseif maps.testMove(map, newX, newY) then
     maps.movePlayer(player.gridX, player.gridY, newX, newY)
     hasPerformedAction = true
   else
     return
   end
-
-
 
   -- make sure that the enemies get a move after the player
   if hasPerformedAction then
@@ -74,9 +90,29 @@ function players.keypressed(key)
   end
 end
 
+function players.itemTakeOff(slot)
+  if player.items[slot] == nil then
+    return
+  end
+  local item = player.items[slot] 
+  player.damage = player.damage - item.damage
+  player.armor = player.armor - item.armor
+  player.items[slot] = nil
+end
+
+function players.itemPutOn(item) 
+  -- remove old item (if any)
+  player.itemTakeOff(item.slot)
+  
+  player.items[item.slot] = item
+  player.damage = player.damage + item.damage
+  player.armor = player.armor + item.armor
+end
+
 function players.die(player, map)
   gameEnded = true
   console.pushMessage("You died!")
+  console.pushMessage("GAME OVER")
 end
 
 return players

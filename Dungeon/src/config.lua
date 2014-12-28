@@ -22,3 +22,5 @@ enemiesOnLevel = {
   {goblinsOnLevel = 9, dragonsOnLevel = 1}, -- level 6
   {goblinsOnLevel = 9, dragonsOnLevel = 1}, -- level 7
 }
+
+itemsOnLevel = 10

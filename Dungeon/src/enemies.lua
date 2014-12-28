@@ -51,13 +51,18 @@ function enemies.turn(dt, map, enemy)
   if offset == 0 then
     offset = -1
   end
+  
+  if util.checkPathVisible(player.gridX, player.gridY, enemy.gridX, enemy.gridY) then
+    console.pushMessage(enemy.name .. " sees player")
+  end
+  
   if math.random() > 0.5 then
-    if maps.test(map, enemy.gridX + offset, enemy.gridY) and not map[enemy.gridX + offset][enemy.gridY].hasPlayer then
+    if maps.testMove(map, enemy.gridX + offset, enemy.gridY) then
       enemy.gridX = enemy.gridX + offset
       maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
     end
   else
-    if maps.test(map, enemy.gridX, enemy.gridY + offset) and not map[enemy.gridX][enemy.gridY + offset].hasPlayer then
+    if maps.testMove(map, enemy.gridX, enemy.gridY + offset) then
       enemy.gridY = enemy.gridY + offset
       maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
     end
@@ -94,7 +99,7 @@ function enemies.placeEnemies(map, gridSizeX, gridSizeY)
   while enemiesPlaced < enemyCount do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
-    if maps.test(map, enemyX, enemyY) and not maps.testEnemy(map, enemyX, enemyY) and not map[enemyX][enemyY].hasPlayer then
+    if maps.testMove(map, enemyX, enemyY) and not maps.testEnemy(map, enemyX, enemyY) and not map[enemyX][enemyY].hasPlayer then
       local newEnemy = enemies.newGoblin(enemyX, enemyY)
       maps.registerEnemy(map, enemyX, enemyY, newEnemy)
       enemiesPlaced = enemiesPlaced + 1
@@ -107,7 +112,7 @@ function enemies.placeEnemies(map, gridSizeX, gridSizeY)
   while enemiesPlaced < 1 do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
-    if maps.test(map, enemyX, enemyY) and not maps.testEnemy(map, enemyX, enemyY) and not map[enemyX][enemyY].hasPlayer then
+    if maps.testMove(map, enemyX, enemyY) and not maps.testEnemy(map, enemyX, enemyY) and not map[enemyX][enemyY].hasPlayer then
       local newEnemy = enemies.newDragon(enemyX, enemyY)
       maps.registerEnemy(map, enemyX, enemyY, newEnemy)
       enemiesPlaced = enemiesPlaced + 1

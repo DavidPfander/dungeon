@@ -20,13 +20,13 @@ function util.getEnemyLighting(gridX, gridY)
     math.abs(gridY - player.gridY) * math.abs(gridY - player.gridY))
   
   local lighting = math.min(255, 50 + 30 * (vision - distance))
-  if distance > vision or not checkPathVisible(player.gridX, player.gridY, gridX, gridY) then
+  if distance > vision or not util.checkPathVisible(player.gridX, player.gridY, gridX, gridY) then
     lighting = 0
   end
   return lighting
 end
 
-function checkPathVisible(x,y,tileX,tileY)
+function util.checkPathVisible(x,y,tileX,tileY)
   local visible = true
   local visionPathX = x
   local visionPathY = y
@@ -57,7 +57,7 @@ function util.getTileLighting(x, y)
   if distance > vision then
     visible = false
   else
-    visible = checkPathVisible(player.gridX, player.gridY, x, y)
+    visible = util.checkPathVisible(player.gridX, player.gridY, x, y)
   end
   
   if visible then

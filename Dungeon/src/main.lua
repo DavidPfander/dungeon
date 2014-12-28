@@ -4,8 +4,11 @@ require "maps"
 require "table_save"
 require "config"
 require "console"
+require "items"
 
 function love.load()
+
+  items.buildItemLibrary()
 
   math.randomseed(os.time())
   hasPlayerPerformedAction = false
@@ -20,7 +23,8 @@ function love.load()
 
   map = dungeon[1]
   level = 1
-  enemies.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
+  enemies.placeEnemies(map, gridSizeX, gridSizeY)
+  items.placeItems(gridSizeX, gridSizeY)
 end
 
 function getEnemy(map, gridX, gridY)
@@ -66,6 +70,8 @@ function love.draw()
       end
     end
   end
+  
+  items.draw()
 
   players.draw()
 

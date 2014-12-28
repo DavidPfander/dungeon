@@ -73,11 +73,11 @@ function maps.generate(sizeX, sizeY)
       curY = roomY
 
       -- Place the player
-      if level == 1 then
+      if level == 1 and maps.roomCount == 1 then
         player = players.new(curX, curY)
         maps.map[curX][curY].hasPlayer = true
       end
-      
+
       -- Place stairs up
       if maps.roomCount == 1 and level ~= 1 then
         maps.map[curX][curY] = tiles.newStairsUp()
@@ -138,10 +138,17 @@ function maps.generate(sizeX, sizeY)
 end
 
 -- Returns true if the tile is not walkable or there is a monster on the field
-function maps.test(map, x, y)
-  if map[x][y].walkable == true or map[x][y].monster ~= nil then
+function maps.testMove(map, x, y)
+  if map[x][y].walkable == true and map[x][y].monster == nil and map[x][y].hasPlayer == false then
     return true
   end
+--  if not map[x][y].walkable then
+--    console.pushMessage("not walkable")
+--  elseif map[x][y].monster ~= nil then
+--    console.pushMessage("monster")
+--  elseif map[x][y].hasPlayer == true then
+--    console.pushMessage("player")
+--  end
   return false
 end
 
@@ -191,7 +198,7 @@ function maps.movePlayer(oldX, oldY, x, y)
     for stairsX=1,gridSizeX,1 do
       for stairsY=1,gridSizeY,1 do
         if (moveUp and map[stairsX][stairsY].type == "stairsdown") or
-           (moveDown and map[stairsX][stairsY].type == "stairsup") then
+          (moveDown and map[stairsX][stairsY].type == "stairsup") then
           map[stairsX][stairsY].hasPlayer = true
           player.gridX = stairsX
           player.gridY = stairsY
@@ -206,7 +213,7 @@ function maps.movePlayer(oldX, oldY, x, y)
 
   moveUp = false
   moveDown = false
-    
+
 end
 
 function maps.draw()
@@ -215,10 +222,10 @@ function maps.draw()
       local lighting = util.getTileLighting(x, y)
       love.graphics.setColor(lighting, lighting, lighting)
       love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
-      
+
       if lighting ~= 0 then
         if map[x][y].type == "floor" then
-  
+
         elseif map[x][y].type == "wall" then
           love.graphics.setColor(150,150,150)
           love.graphics.rectangle("line", x * 32, y * 32, 32, 32)
@@ -230,6 +237,12 @@ function maps.draw()
           love.graphics.draw(stairsUpImage, x * 32, y * 32, 0, 1, 1, 0, 0)
         end
       end
+
+--      if map[x][y].hasPlayer then
+--        love.graphics.setColor(255,255,25)
+--        love.graphics.print('P', x * 32, y * 32)
+--      end
+
     end
   end
 end
