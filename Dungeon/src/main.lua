@@ -3,6 +3,7 @@ require "enemies"
 require "maps"
 require "table_save"
 require "config"
+require "console"
 
 function love.load()
 
@@ -51,6 +52,7 @@ function love.update(dt)
       hasPlayerPerformedAction = false
     end
   end
+  console.update()
 end
 
 function love.draw()
@@ -82,6 +84,7 @@ function love.draw()
     love.graphics.setFont(love.graphics.newFont(40))
     love.graphics.print("Out of this hellhole...", 400, 300)
   end
+  console.draw()
 end
 
 function love.keypressed(key)

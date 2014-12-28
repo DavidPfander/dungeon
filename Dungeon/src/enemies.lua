@@ -52,8 +52,12 @@ function enemies.draw(enemy)
     return
   end
 
+  local lighting = util.getCellLighting(enemy.gridX, enemy.gridY)
+
+  love.graphics.setColor(lighting, lighting, lighting)
+  -- love.graphics.setColor(255, 255, 255)
   --love.graphics.setColor(255, 0, 0)
-  --love.graphics.rectangle("fill", enemy.actualX, enemy.actualY, util.pixelPerCellX, util.pixelPerCellY)
+  -- love.graphics.rectangle("fill", enemy.actualX, enemy.actualY, util.pixelPerCellX, util.pixelPerCellY)
   local goblinImage = love.graphics.newImage( "golden_dragon.png" )
   local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
   -- love.graphics.draw(goblinImage, pixelX, pixelY, 0, 1, 1, 0, 0)
