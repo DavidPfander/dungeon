@@ -78,6 +78,12 @@ function players.keypressed(key)
     fights.playerAttack(player, enemy, map)
     hasPerformedAction = true
   elseif maps.testMove(map, newX, newY) then
+    if maps.testItem(newX, newY) then
+      local items = maps.takeItems(newX, newY)
+      for i = 1, #items do
+        players.itemPutOn(items[i])      
+      end
+    end
     maps.movePlayer(player.gridX, player.gridY, newX, newY)
     hasPerformedAction = true
   else
@@ -102,7 +108,7 @@ end
 
 function players.itemPutOn(item) 
   -- remove old item (if any)
-  player.itemTakeOff(item.slot)
+  players.itemTakeOff(item.slot)
   
   player.items[item.slot] = item
   player.damage = player.damage + item.damage

@@ -266,3 +266,17 @@ function maps.moveDown()
     moveDown = true
   end
 end
+
+function maps.testItem(x, y)
+  if #map[x][y].items > 0 then
+    return true
+  end
+  return false
+end
+
+function maps.takeItems(x, y)
+  local items = map[x][y].items
+  map[x][y].items = {}
+  return items
+end
+
