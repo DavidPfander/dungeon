@@ -135,15 +135,19 @@ end
 
 -- Returns true if the tile is not walkable or there is a monster on the field 
 function maps.test(map, x, y)
-  if map[x][y].walkable == true or next(map[x][y].monster) then
+  if map[x][y].walkable == true or map[x][y].monster ~= nil then
     return true
   end
   return false
 end
 
+function maps.removeEnemy(map, x, y, enemy)
+  map[x][y].monster = nil
+end
+
 -- Returns true if there is a monster on the field
 function maps.testEnemy(map, x, y)
-  if next(map[x][y].monster) then
+  if map[x][y].monster ~= nil then
     return true
   end
   return false
@@ -156,7 +160,7 @@ end
 
 -- Moves the monster "movingMonster" from "oldX","oldY" to "x","y"
 function maps.moveEnemy(map, oldX, oldY, x, y, movingMonster)
-  map[oldX][oldY].monster = {}
+  map[oldX][oldY].monster = nil
   map[x][y].monster = movingMonster
 end
 
@@ -205,10 +209,9 @@ function maps.draw()
         math.abs(x - player.gridX) * math.abs(x - player.gridX) +
         math.abs(y - player.gridY) * math.abs(y - player.gridY))
       if distance <= vision then
-      -- Now check if there is a wall inbetween
-          
+      -- Now check if there is a visible   
         -- Tile is in vision  
-        local lighting = 10 * (vision - distance)
+        local lighting = 10 + 15 * (vision - distance)
         love.graphics.setColor(lighting, lighting, lighting)
         love.graphics.rectangle("fill",  x * 32, y * 32, 32, 32)
         if map[x][y].type == "floor" then

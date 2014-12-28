@@ -12,7 +12,8 @@ function enemies.new(gridX, gridY)
     actualX = pixelX,
     actualY = pixelY,
     speed = 10,
-    lastActionTime = love.timer.getTime()
+    health = 100,
+    damage = 5,
   }
   return newenemies
 end
@@ -24,48 +25,55 @@ function enemies.update(dt, map, enemy)
 end
 
 function enemies.turn(dt, map, enemy)
+
   local oldX, oldY = enemy.gridX, enemy.gridY
-  offset = math.random(0, 1)
+  local offset = math.random(0, 1)
   if offset == 0 then
     offset = -1
   end
   if math.random() > 0.5 then
     if maps.test(map, enemy.gridX + offset, enemy.gridY) and not map[enemy.gridX + offset][enemy.gridY].hasPlayer then
       enemy.gridX = enemy.gridX + offset
-      enemy.lastActionTime = currentTime
       maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
     end
   else
     if maps.test(map, enemy.gridX, enemy.gridY + offset) and not map[enemy.gridX][enemy.gridY + offset].hasPlayer then
       enemy.gridY = enemy.gridY + offset
-      enemy.lastActionTime = currentTime
       maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
     end
   end
-
 end
 
 function enemies.draw(enemy)
   -- local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
+  -- print(enemy)
+  -- print(enemy.gridX)
+--  if player.gridX - enemy.gridX > vision or player.gridY - enemy.gridY > vision then
+--    return
+--  end
+
   love.graphics.setColor(255, 0, 0)
   love.graphics.rectangle("fill", enemy.actualX, enemy.actualY, util.pixelPerCellX, util.pixelPerCellY)
   -- love.graphics.setColor(oldColor)
 end
 
 function enemies.placeEnemies(map, enemyCount, gridSizeX, gridSizeY)
-  local enemyList = {}
   local enemiesPlaced = 0
   while enemiesPlaced < enemyCount do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
-    if (maps.test(map, enemyX, enemyY)) and not map[enemyX][enemyY].hasPlayer then
+    if maps.test(map, enemyX, enemyY) and not maps.testEnemy(map, enemyX, enemyY) and not map[enemyX][enemyY].hasPlayer then
       local newEnemy = enemies.new(enemyX, enemyY)
-      enemyList[#enemyList + 1] = newEnemy
       maps.registerEnemy(map, enemyX, enemyY, newEnemy)
       enemiesPlaced = enemiesPlaced + 1
     end
   end
-  return enemyList
+end
+
+function enemies.die(enemy, map)
+  maps.removeEnemy(map, enemy.gridX, enemy.gridY, enemy)
+  print("removed from table")
+  enemyCount = enemyCount - 1
 end
 
 return enemies
