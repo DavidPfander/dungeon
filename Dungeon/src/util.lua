@@ -1,3 +1,5 @@
+require "save"
+
 local P = {}
 util = P
 
@@ -67,6 +69,20 @@ function util.getTileLighting(x, y)
     lighting = 0
   end
   return lighting
+end
+
+function util.saveGame()
+  local saveFile = save.new(player, enemyCount, dungeon, level)
+  table.save(saveFile, saveFileName)
+end
+
+function util.loadGame()
+  saveStatus = table.load(saveFileName)
+  player = saveStatus.player
+  enemyCount = saveStatus.enemyCount
+  dungeon = saveStatus.dungeon
+  level = saveStatus.level
+  map = dungeon[level]
 end
 
 return util

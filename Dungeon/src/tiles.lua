@@ -29,7 +29,7 @@ function tiles.newStairsUp()
   local newTile = {
     walkable = true,
     monster = nil,
-    loot = {},
+    items = {},
     type = "stairsup",
     visible = false,
     hasPlayer = false

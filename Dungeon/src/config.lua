@@ -8,7 +8,7 @@ gridSizeX = 16
 gridSizeY = 16
 
 -- Depth
-dungeonDepth = 42
+dungeonDepth = 7
 
 -- Hero vision
 vision = 5
@@ -24,3 +24,7 @@ enemiesOnLevel = {
 }
 
 itemsOnLevel = 10
+
+fullscreen = false
+
+saveFileName = "dugeon.sav"

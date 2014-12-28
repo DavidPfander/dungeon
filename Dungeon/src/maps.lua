@@ -238,9 +238,9 @@ function maps.draw()
         end
       end
 
---      if map[x][y].hasPlayer then
+--      if #map[x][y].items > 0 then
 --        love.graphics.setColor(255,255,25)
---        love.graphics.print('P', x * 32, y * 32)
+--        love.graphics.print('I', x * 32, y * 32)
 --      end
 
     end

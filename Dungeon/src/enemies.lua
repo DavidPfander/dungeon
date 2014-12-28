@@ -92,7 +92,7 @@ function enemies.draw(enemy)
   -- love.graphics.setColor(oldColor)
 end
 
-function enemies.placeEnemies(map, gridSizeX, gridSizeY)
+function enemies.placeEnemies(map)
   -- place goblins
   local enemiesPlaced = 0
   local enemyCount = enemiesOnLevel[level].goblinsOnLevel
