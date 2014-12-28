@@ -48,12 +48,16 @@ function enemies.draw(enemy)
   -- local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
   -- print(enemy)
   -- print(enemy.gridX)
---  if player.gridX - enemy.gridX > vision or player.gridY - enemy.gridY > vision then
---    return
---  end
+  if math.abs(player.gridX - enemy.gridX) > vision or math.abs(player.gridY - enemy.gridY) > vision then
+    return
+  end
 
-  love.graphics.setColor(255, 0, 0)
-  love.graphics.rectangle("fill", enemy.actualX, enemy.actualY, util.pixelPerCellX, util.pixelPerCellY)
+  --love.graphics.setColor(255, 0, 0)
+  --love.graphics.rectangle("fill", enemy.actualX, enemy.actualY, util.pixelPerCellX, util.pixelPerCellY)
+  local goblinImage = love.graphics.newImage( "golden_dragon.png" )
+  local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
+  -- love.graphics.draw(goblinImage, pixelX, pixelY, 0, 1, 1, 0, 0)
+  love.graphics.draw(goblinImage, pixelX, pixelY)
   -- love.graphics.setColor(oldColor)
 end
 

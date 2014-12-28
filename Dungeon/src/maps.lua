@@ -202,6 +202,7 @@ end
 function maps.draw()
   for y=1, #map do
     for x=1, #map[y] do
+
       if math.abs(x - player.gridX) <= vision and
         math.abs(y - player.gridY) <= vision then
         -- Tile is in vision

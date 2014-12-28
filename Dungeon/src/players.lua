@@ -47,12 +47,13 @@ function players.keypressed(key)
     newX = player.gridX + 1
     newY = player.gridY
   end
-  
-    -- check whether enemy was hit
+
+  -- check whether enemy was hit
   if maps.testEnemy(map, newX, newY) then
     local enemy = getEnemy(map, newX, newY)
     -- enemies.die(enemy, map)
     fights.playerAttack(player, enemy, map)
+    hasPerformedAction = true
   elseif maps.test(map, newX, newY) then
     maps.movePlayer(map, player.gridX, player.gridY, newX, newY)
     player.gridX = newX
