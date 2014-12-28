@@ -3,9 +3,10 @@ console = P
 
 local messageStack = {}
 local consoleOriginX = 550
-local consoleOriginY = 20
+local consoleOriginY = 5
+local consolveInnerBoundary = 5
 local consoleIncrementY = 20
-local maxMessages = 10
+local maxMessages = 20
 local fontSize = 15
 
 function console.update()
@@ -19,12 +20,15 @@ function console.update()
 end
 
 function console.draw()
+  love.graphics.setColor(100, 150, 100)
+  love.graphics.rectangle("line", consoleOriginX , consoleOriginY, 245, 500)
+
   local offset = 0
-  for i = #messageStack, 1, -1 do
+  for i = 1, #messageStack do
     local message = messageStack[i]
     love.graphics.setColor(150, 200, 150)
     love.graphics.setFont(love.graphics.newFont(fontSize))
-    love.graphics.print(message.text, consoleOriginX, consoleOriginY + offset)
+    love.graphics.print(message.text, consoleOriginX + consolveInnerBoundary, consoleOriginY + consolveInnerBoundary + offset)
     offset = offset + consoleIncrementY
   end
 end

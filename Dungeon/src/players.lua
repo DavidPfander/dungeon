@@ -1,5 +1,6 @@
 require "util"
 require "fights"
+require "console"
 
 local P = {}
 players = P
@@ -73,6 +74,7 @@ end
 
 function players.die(player, map)
   gameEnded = true
+  console.pushMessage("You died!")
 end
 
 return players

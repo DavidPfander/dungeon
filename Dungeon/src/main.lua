@@ -12,6 +12,7 @@ function love.load()
   gameEnded = false
   gameWon = false
   dungeon = {}
+  
   for clevel=1,dungeonDepth do
     level = clevel
     dungeon[clevel] = maps.generate(gridSizeX, gridSizeY)
