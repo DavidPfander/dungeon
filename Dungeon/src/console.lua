@@ -21,7 +21,7 @@ end
 
 function console.draw()
   love.graphics.setColor(100, 150, 100)
-  love.graphics.rectangle("line", consoleOriginX , consoleOriginY, 245, 300)
+  love.graphics.rectangle("line", consoleOriginX , consoleOriginY, 245, 290)
 
   local offset = 0
   for i = 1, #messageStack do
