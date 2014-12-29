@@ -17,7 +17,7 @@ function items.buildItemLibrary()
   allItems[#allItems + 1] = ironSword
 
   local ironChestPlate = {
-    slot = "chest",
+    slot = "chestArmor",
     name = "iron chest plate",
     damage = 0,
     armor = 50,

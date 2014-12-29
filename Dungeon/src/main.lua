@@ -7,10 +7,13 @@ require "console"
 require "items"
 require "menu"
 require "statusbar"
+require "inventories"
 
 function love.load()
 
   items.buildItemLibrary()
+
+  inventories.load()
 
   math.randomseed(os.time())
   hasPlayerPerformedAction = false
@@ -60,12 +63,14 @@ function love.update(dt)
   end
 end
 
-  testCount = 0
+testCount = 0
 
 function love.draw()
   if running then
 
     statusbar.draw()
+
+    inventories.draw()
 
     maps.draw()
 

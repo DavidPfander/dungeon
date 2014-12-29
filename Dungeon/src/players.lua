@@ -20,9 +20,7 @@ function players.new(playerX, playerY)
     health = 100,
     damage = 20,
     armor = 0,
-    items = {helmet = nil, chestArmor = nil, weapon = nil},
-    inventory = {}
-    
+    items = {["helmet"] = nil, ["chestArmor"] = nil, ["weapon"] = nil}
   }
   return newplayers
 end
@@ -31,8 +29,8 @@ function players.update(dt)
   local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
   player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
   player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
-  
-  inventories.update(player.inventory)
+
+  inventories.update()
 end
 
 function players.draw()
@@ -44,17 +42,51 @@ function players.draw()
   love.graphics.draw(heroImage, player.actualX, player.actualY)
 
   -- draw stats
-  love.graphics.setColor(100, 150, 100)
-  love.graphics.rectangle("line", playerStatsOriginX , playerStatsOriginY, 245, 65)
-
   love.graphics.setColor(150, 200, 150)
   love.graphics.setFont(love.graphics.newFont(fontSize))
-  
-  love.graphics.print("health: " .. player.health, playerStatsOriginX + 5, playerStatsOriginY + 5)
-  love.graphics.print("damage: " .. player.damage, playerStatsOriginX + 5, playerStatsOriginY + 5 + 20)
-  love.graphics.print("armor: " .. player.armor, playerStatsOriginX + 5, playerStatsOriginY + 5 + 40)
-  
-  inventories.draw(player.inventory)
+
+  love.graphics.rectangle("line", playerStatsOriginX , playerStatsOriginY, 75, 20)
+  love.graphics.print("h: " .. player.health, playerStatsOriginX + 5, playerStatsOriginY + 5)
+  love.graphics.rectangle("line", playerStatsOriginX + 85 , playerStatsOriginY, 75, 20)
+  love.graphics.print("d: " .. player.damage, playerStatsOriginX + 5 + 85, playerStatsOriginY + 5)
+  love.graphics.rectangle("line", playerStatsOriginX + 170 , playerStatsOriginY, 75, 20)
+  love.graphics.print("a: " .. player.armor, playerStatsOriginX + 5 + 170, playerStatsOriginY + 5)
+
+  -- draw slot
+  love.graphics.rectangle("line", playerStatsOriginX , playerStatsOriginY + 30, 75, 20)
+  love.graphics.print("helmet", playerStatsOriginX + 5, playerStatsOriginY + 5 + 30)
+
+  if player.items["helmet"] == nil then
+    love.graphics.rectangle("line", playerStatsOriginX + 21 , playerStatsOriginY + 55 + 10, 32, 32)
+  else
+    local image = love.graphics.newImage(player.items["helmet"].image)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(image, playerStatsOriginX + 21 , playerStatsOriginY + 55 + 10)
+  end
+
+  love.graphics.setColor(150, 200, 150)
+  love.graphics.rectangle("line", playerStatsOriginX + 85 , playerStatsOriginY + 30, 75, 20)
+  love.graphics.print("chest", playerStatsOriginX + 85 + 5, playerStatsOriginY + 5 + 30)
+
+  if player.items["chestArmor"] == nil then
+    love.graphics.rectangle("line", playerStatsOriginX + 21 + 75 + 10 , playerStatsOriginY + 55 + 10, 32, 32)
+  else
+    local image = love.graphics.newImage(player.items["chestArmor"].image)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(image, playerStatsOriginX + 21 + 75 + 10 , playerStatsOriginY + 55 + 10)
+  end
+
+  love.graphics.setColor(150, 200, 150)
+  love.graphics.rectangle("line", playerStatsOriginX + 170, playerStatsOriginY + 30, 75, 20)
+  love.graphics.print("weapon", playerStatsOriginX + 5 + 170, playerStatsOriginY + 5 + 30)
+
+  if player.items["weapon"] == nil then
+    love.graphics.rectangle("line", playerStatsOriginX + 21 + 20 + 150 , playerStatsOriginY + 55 + 10, 32, 32)
+  else
+    local image = love.graphics.newImage(player.items["weapon"].image)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(image, playerStatsOriginX + 21 + 20 + 150 , playerStatsOriginY + 55 + 10)
+  end
 end
 
 function players.keypressed(key)
@@ -87,7 +119,13 @@ function players.keypressed(key)
     if maps.testItem(newX, newY) then
       local items = maps.takeItems(newX, newY)
       for i = 1, #items do
-        players.itemPutOn(items[i])      
+        local item = items[i]
+        -- players.itemPutOn(items[i])
+        if player.items[item.slot] == nil then
+          players.itemPutOn(item)
+        else
+          inventories.put(item)
+        end
       end
     end
     maps.movePlayer(player.gridX, player.gridY, newX, newY)
@@ -106,16 +144,16 @@ function players.itemTakeOff(slot)
   if player.items[slot] == nil then
     return
   end
-  local item = player.items[slot] 
+  local item = player.items[slot]
   player.damage = player.damage - item.damage
   player.armor = player.armor - item.armor
   player.items[slot] = nil
 end
 
-function players.itemPutOn(item) 
+function players.itemPutOn(item)
   -- remove old item (if any)
   players.itemTakeOff(item.slot)
-  
+
   player.items[item.slot] = item
   player.damage = player.damage + item.damage
   player.armor = player.armor + item.armor
