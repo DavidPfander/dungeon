@@ -142,13 +142,13 @@ function maps.testMove(map, x, y)
   if map[x][y].walkable == true and map[x][y].monster == nil and map[x][y].hasPlayer == false then
     return true
   end
-  if not map[x][y].walkable then
-    console.pushMessage("not walkable")
-  elseif map[x][y].monster ~= nil then
-    console.pushMessage("monster")
-  elseif map[x][y].hasPlayer == true then
-    console.pushMessage("player")
-  end
+--  if not map[x][y].walkable then
+--    console.pushMessage("not walkable")
+--  elseif map[x][y].monster ~= nil then
+--    console.pushMessage("monster")
+--  elseif map[x][y].hasPlayer == true then
+--    console.pushMessage("player")
+--  end
   return false
 end
 

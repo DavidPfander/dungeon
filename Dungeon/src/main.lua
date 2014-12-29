@@ -6,6 +6,7 @@ require "config"
 require "console"
 require "items"
 require "menu"
+require "statusbar"
 
 function love.load()
 
@@ -64,6 +65,8 @@ end
 function love.draw()
   if running then
 
+    statusbar.draw()
+
     maps.draw()
 
     for i = 1, #map do
@@ -73,8 +76,6 @@ function love.draw()
         end
       end
     end
-
-
 
     items.draw(map)
 

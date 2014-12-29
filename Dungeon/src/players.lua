@@ -1,12 +1,13 @@
 require "util"
 require "fights"
 require "console"
+require "inventories"
 
 local P = {}
 players = P
 
 local playerStatsOriginX = 550
-local playerStatsOriginY = 400
+local playerStatsOriginY = 300
 local playerStatsFontSize = 15
 
 function players.new(playerX, playerY)
@@ -19,7 +20,8 @@ function players.new(playerX, playerY)
     health = 100,
     damage = 20,
     armor = 0,
-    items = {helmet = nil, chestArmor = nil, weapon = nil}
+    items = {helmet = nil, chestArmor = nil, weapon = nil},
+    inventory = {}
     
   }
   return newplayers
@@ -29,6 +31,8 @@ function players.update(dt)
   local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
   player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
   player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
+  
+  inventories.update(player.inventory)
 end
 
 function players.draw()
@@ -41,7 +45,7 @@ function players.draw()
 
   -- draw stats
   love.graphics.setColor(100, 150, 100)
-  love.graphics.rectangle("line", playerStatsOriginX , playerStatsOriginY, 245, 195)
+  love.graphics.rectangle("line", playerStatsOriginX , playerStatsOriginY, 245, 65)
 
   love.graphics.setColor(150, 200, 150)
   love.graphics.setFont(love.graphics.newFont(fontSize))
@@ -49,6 +53,8 @@ function players.draw()
   love.graphics.print("health: " .. player.health, playerStatsOriginX + 5, playerStatsOriginY + 5)
   love.graphics.print("damage: " .. player.damage, playerStatsOriginX + 5, playerStatsOriginY + 5 + 20)
   love.graphics.print("armor: " .. player.armor, playerStatsOriginX + 5, playerStatsOriginY + 5 + 40)
+  
+  inventories.draw(player.inventory)
 end
 
 function players.keypressed(key)
