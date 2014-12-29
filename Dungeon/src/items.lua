@@ -15,6 +15,15 @@ function items.buildItemLibrary()
     image = "ironSword.png"
   }
   allItems[#allItems + 1] = ironSword
+  
+    local enchantedIronSword = {
+    slot = "weapon",
+    name = "enchanted iron sword",
+    damage = 25,
+    armor = 0,
+    image = "enchantedIronSword.png"
+  }
+  allItems[#allItems + 1] = enchantedIronSword
 
   local ironChestPlate = {
     slot = "chestArmor",

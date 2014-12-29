@@ -20,7 +20,7 @@ function love.load()
   gameEnded = false
   gameWon = false
 
-  running = false
+  running = "menu" -- | "play" | "inventory
 
   menu.generateMainMenu()
 
@@ -31,7 +31,7 @@ function getEnemy(map, gridX, gridY)
 end
 
 function love.update(dt)
-  if running then
+  if running == "play" then
     if enemyCount == 0 then
       gameWon = true
     else
@@ -66,7 +66,7 @@ end
 testCount = 0
 
 function love.draw()
-  if running then
+  if running == "play" or running == "inventory" then
 
     statusbar.draw()
 
@@ -109,15 +109,20 @@ function love.draw()
 end
 
 function love.keypressed(key)
-  if running then
+  if running == "play" then
     if key == "escape" then
-      running = false
+      running = "menu"
     elseif gameWon then
       return
+    elseif key == "i" then  
+      -- make "running" a string and use it to dispatch modes
+      running = "inventory"
     elseif not hasPlayerPerformedAction then
       players.keypressed(key)
     end
-  else
+  elseif running == "inventory" then
+    inventories.keypressed(key)
+  elseif running == "menu" then
     menu.mainMenu:keypressed(key)
   end
 end

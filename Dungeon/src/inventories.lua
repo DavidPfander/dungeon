@@ -7,6 +7,9 @@ local inventorySizeY = 4
 local inventoryOriginX = 565
 local inventoryOriginY = 450
 
+local cursorX = 1
+local cursorY = 1
+
 function inventories.load()
   inventory = {}
   for i = 1, inventorySizeX do
@@ -17,6 +20,34 @@ function inventories.load()
   end
 end
 
+function inventories.keypressed(key)
+  if key == "escape" then
+    running = "play"
+    return
+  end
+
+  if key == "up" then
+    cursorY = math.max(1, cursorY - 1)
+  elseif key == "down" then
+    cursorY = math.min(inventorySizeY, cursorY + 1)
+  elseif key == "left" then
+    cursorX = math.max(1, cursorX - 1)
+  elseif key == "right" then
+    cursorX = math.min(inventorySizeX, cursorX + 1)
+  elseif key == "return" then
+    if inventory[cursorX][cursorY] == nil then
+      return
+    end
+    local item = inventory[cursorX][cursorY]
+    inventory[cursorX][cursorY] = nil
+    local oldItem = nil
+    if players.slotOccupied(item.slot) then
+      inventory[cursorX][cursorY] = players.itemTakeOff(item.slot)
+    end
+    players.itemPutOn(item)
+  end
+
+end
 
 function inventories.update(inventory)
 
@@ -47,8 +78,6 @@ function inventories.draw()
   -- love.graphics.setColor(100, 150, 100)
   -- love.graphics.rectangle("line", inventoryOriginX , inventoryOriginY, 245, 190)
 
-  
-
   for i = 1, inventorySizeX do
     for j = 1, inventorySizeY do
       local pixelX, pixelY = inventories.gridToPixel(i, j)
@@ -63,6 +92,13 @@ function inventories.draw()
       end
     end
   end
+
+  love.graphics.setColor(255, 255, 255)
+  if running == "inventory" then
+    local pixelX, pixelY = inventories.gridToPixel(cursorX, cursorY)
+    love.graphics.rectangle("line", pixelX - 2, pixelY - 2, 32 + 4, 32 + 4)
+  end
+
 end
 
 return inventories

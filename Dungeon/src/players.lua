@@ -140,19 +140,26 @@ function players.keypressed(key)
   end
 end
 
-function players.itemTakeOff(slot)
+function players.slotOccupied(slot)
   if player.items[slot] == nil then
-    return
+    return false
   end
+  return true
+end
+
+function players.itemTakeOff(slot)
   local item = player.items[slot]
   player.damage = player.damage - item.damage
   player.armor = player.armor - item.armor
   player.items[slot] = nil
+  return item
 end
 
 function players.itemPutOn(item)
   -- remove old item (if any)
-  players.itemTakeOff(item.slot)
+  if players.slotOccupied(item.slot) then
+    players.itemTakeOff(item.slot)
+  end
 
   player.items[item.slot] = item
   player.damage = player.damage + item.damage
