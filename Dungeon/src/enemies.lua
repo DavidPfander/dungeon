@@ -44,27 +44,32 @@ function enemies.update(dt, map, enemy)
   enemy.actualX = enemy.actualX - ((enemy.actualX - pixelX) * enemy.speed * dt)
 end
 
-function enemies.turn(dt, map, enemy)
+function enemies.turn(dt, enemy)
 
   local oldX, oldY = enemy.gridX, enemy.gridY
   local offset = math.random(0, 1)
   if offset == 0 then
     offset = -1
   end
-  
+
   if util.checkPathVisible(player.gridX, player.gridY, enemy.gridX, enemy.gridY) then
     console.pushMessage(enemy.name .. " sees player")
-  end
-  
-  if math.random() > 0.5 then
-    if maps.testMove(map, enemy.gridX + offset, enemy.gridY) then
-      enemy.gridX = enemy.gridX + offset
-      maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
+    local pathX, pathY = util.getFirstElementOnPath(enemy.gridX, enemy.gridY, player.gridX, player.gridY)
+    if util.getMoveDistance(enemy.gridX, enemy.gridY, player.gridX, player.gridY) > 1 then
+      maps.moveEnemy(enemy, pathX, pathY)
+    else
     end
+
   else
-    if maps.testMove(map, enemy.gridX, enemy.gridY + offset) then
-      enemy.gridY = enemy.gridY + offset
-      maps.moveEnemy(map, oldX, oldY, enemy.gridX, enemy.gridY, enemy)
+
+    if math.random() > 0.5 then
+      if maps.testMove(map, enemy.gridX + offset, enemy.gridY) then
+        maps.moveEnemy(enemy, enemy.gridX + offset, enemy.gridY)
+      end
+    else
+      if maps.testMove(map, enemy.gridX, enemy.gridY + offset) then
+        maps.moveEnemy(enemy, enemy.gridX, enemy.gridY + offset)
+      end
     end
   end
 end
@@ -108,8 +113,8 @@ function enemies.placeEnemies(map)
 
   -- place dragons
   local enemiesPlaced = 0
-    local enemyCount = enemiesOnLevel[level].dragonsOnLevel
-  while enemiesPlaced < 1 do
+  local enemyCount = enemiesOnLevel[level].dragonsOnLevel
+  while enemiesPlaced < enemyCount do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
     if maps.testMove(map, enemyX, enemyY) and not maps.testEnemy(map, enemyX, enemyY) and not map[enemyX][enemyY].hasPlayer then
@@ -122,7 +127,6 @@ end
 
 function enemies.die(enemy, map)
   maps.removeEnemy(map, enemy.gridX, enemy.gridY, enemy)
-  enemyCount = enemyCount - 1
   console.pushMessage(enemy.name .. " dies!")
 end
 

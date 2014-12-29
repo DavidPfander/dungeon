@@ -142,13 +142,13 @@ function maps.testMove(map, x, y)
   if map[x][y].walkable == true and map[x][y].monster == nil and map[x][y].hasPlayer == false then
     return true
   end
---  if not map[x][y].walkable then
---    console.pushMessage("not walkable")
---  elseif map[x][y].monster ~= nil then
---    console.pushMessage("monster")
---  elseif map[x][y].hasPlayer == true then
---    console.pushMessage("player")
---  end
+  --  if not map[x][y].walkable then
+  --    console.pushMessage("not walkable")
+  --  elseif map[x][y].monster ~= nil then
+  --    console.pushMessage("monster")
+  --  elseif map[x][y].hasPlayer == true then
+  --    console.pushMessage("player")
+  --  end
   return false
 end
 
@@ -171,9 +171,11 @@ function maps.removeEnemy(map, x, y, enemy)
 end
 
 -- Moves the monster "movingMonster" from "oldX","oldY" to "x","y"
-function maps.moveEnemy(map, oldX, oldY, x, y, movingMonster)
-  map[oldX][oldY].monster = nil
-  map[x][y].monster = movingMonster
+function maps.moveEnemy(enemy, x, y)
+  map[enemy.gridX][enemy.gridY].monster = nil
+  map[x][y].monster = enemy
+  enemy.gridX = x
+  enemy.gridY = y
 end
 
 -- Returns true iff the tile at "x","y" is not walkable
@@ -238,10 +240,10 @@ function maps.draw()
         end
       end
 
---      if #map[x][y].items > 0 then
---        love.graphics.setColor(255,255,25)
---        love.graphics.print('I', x * 32, y * 32)
---      end
+      --      if #map[x][y].items > 0 then
+      --        love.graphics.setColor(255,255,25)
+      --        love.graphics.print('I', x * 32, y * 32)
+      --      end
 
     end
   end

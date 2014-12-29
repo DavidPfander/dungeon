@@ -8,7 +8,7 @@ function fights.playerAttack(player, enemy, map)
   
   console.pushMessage("player hit enemy for " .. player.damage .. " damage")
 
-  if enemy.health == 0 then
+  if enemy.health <= 0 then
     enemies.die(enemy, map)
   end
 end
@@ -18,7 +18,7 @@ function fights.playerDefend(enemy, player, map)
   
   console.pushMessage("player was hit by enemy for " .. enemy.damage .. " damage")
   
-  if defender.health == 0 then
+  if defender.health <= 0 then
     players.die(player, map)
   end
 end

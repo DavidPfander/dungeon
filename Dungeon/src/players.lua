@@ -29,8 +29,6 @@ function players.update(dt)
   local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
   player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
   player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
-
-  inventories.update()
 end
 
 function players.draw()
@@ -114,7 +112,6 @@ function players.keypressed(key)
     local enemy = getEnemy(map, newX, newY)
     -- enemies.die(enemy, map)
     fights.playerAttack(player, enemy, map)
-    hasPerformedAction = true
   elseif maps.testMove(map, newX, newY) then
     if maps.testItem(newX, newY) then
       local items = maps.takeItems(newX, newY)
@@ -129,14 +126,8 @@ function players.keypressed(key)
       end
     end
     maps.movePlayer(player.gridX, player.gridY, newX, newY)
-    hasPerformedAction = true
   else
     return
-  end
-
-  -- make sure that the enemies get a move after the player
-  if hasPerformedAction then
-    hasPlayerPerformedAction = true
   end
 end
 

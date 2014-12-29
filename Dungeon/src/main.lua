@@ -44,18 +44,6 @@ function love.update(dt)
           end
         end
       end
-
-      if hasPlayerPerformedAction then
-        -- after the players has moved, it's the enemies turn
-        for i = 1, #map do
-          for j = 1, #map[i] do
-            if map[i][j].monster ~= nil then
-              enemies.turn(dt, map, map[i][j].monster)
-            end
-          end
-        end
-        hasPlayerPerformedAction = false
-      end
     end
     console.update()
   else
@@ -114,11 +102,28 @@ function love.keypressed(key)
       running = "menu"
     elseif gameWon then
       return
-    elseif key == "i" then  
+    elseif key == "i" then
       -- make "running" a string and use it to dispatch modes
       running = "inventory"
-    elseif not hasPlayerPerformedAction then
+    else
       players.keypressed(key)
+      print("playeraction!")
+
+      -- after the players has moved, it's the enemies turn
+      actionPerformed = {}
+      for i = 1, #map do
+        for j = 1, #map[i] do
+          if map[i][j].monster ~= nil then
+            local enemy = map[i][j].monster
+            if actionPerformed[enemy] == nil then
+              enemies.turn(dt, enemy)
+              -- so that the enemy doesn't get another turn should he move in the
+              -- direction of the iteration
+              actionPerformed[enemy] = true
+            end
+          end
+        end
+      end
     end
   elseif running == "inventory" then
     inventories.keypressed(key)
