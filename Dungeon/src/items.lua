@@ -7,6 +7,16 @@ local allItems = {}
 
 function items.buildItemLibrary()
 
+  local stone = {
+    slot = "weapon",
+    name = "stone",
+    damage = 15,
+    armor = 0,
+    image = "bullet.png",
+    consumable = false
+  }
+  allItems[#allItems + 1] = stone
+
   local ironSword = {
     slot = "weapon",
     name = "iron sword",

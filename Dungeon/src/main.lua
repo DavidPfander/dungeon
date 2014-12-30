@@ -8,19 +8,26 @@ require "items"
 require "menu"
 require "statusbar"
 require "inventories"
+require "effects"
+
+-- TODO order action for effects
 
 function love.load()
 
   items.buildItemLibrary()
 
   inventories.load()
+  
+  effects.load()
 
   math.randomseed(os.time())
   hasPlayerPerformedAction = false
   gameEnded = false
   gameWon = false
+  gameUpdateFrequency = 1.0 / 60.0
+  disableEnemyTurn = false
 
-  running = "menu" -- | "play" | "inventory
+  running = "menu" -- | "play" | "inventory" | "aim" | "effect"
 
   menu.generateMainMenu()
 
@@ -31,33 +38,40 @@ function getEnemy(map, gridX, gridY)
 end
 
 function love.update(dt)
+  local startTimer = love.timer.getTime()
   if running == "play" then
     if enemyCount == 0 then
       gameWon = true
     else
       players.update(dt)
-      -- animate the enemies
-      for i = 1, #map do
-        for j = 1, #map[i] do
-          if map[i][j].monster ~= nil then
-            enemies.update(dt, map, map[i][j].monster)
+
+      if not disableEnemyTurn then
+        for i = 1, #map do
+          for j = 1, #map[i] do
+            if map[i][j].monster ~= nil then
+              enemies.update(dt, map, map[i][j].monster)
+            end
           end
         end
       end
     end
     console.update()
+    effects.update(dt)
   else
     menu.mainMenu:update(dt)
   end
+  local stopTimer = love.timer.getTime()
+  local sleepTime = math.max(0, gameUpdateFrequency - (stopTimer - startTimer))
+  love.timer.sleep(sleepTime)
 end
 
 testCount = 0
 
 function love.draw()
 
-   -- love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+  -- love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
 
-  if running == "play" or running == "inventory" then
+  if running == "play" or running == "inventory" or running == "aim" then
 
     statusbar.draw()
 
@@ -76,6 +90,8 @@ function love.draw()
     items.draw(map)
 
     players.draw()
+    
+    effects.draw()
 
     if gameEnded then
       love.graphics.setFont(love.graphics.newFont(40))
@@ -131,5 +147,7 @@ function love.keypressed(key)
     inventories.keypressed(key)
   elseif running == "menu" then
     menu.mainMenu:keypressed(key)
+  elseif running == "aim" then
+    players.aim(key)
   end
 end
