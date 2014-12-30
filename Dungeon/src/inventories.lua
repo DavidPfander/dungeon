@@ -18,6 +18,12 @@ function inventories.load()
       inventory[i][j] = nil
     end
   end
+
+  selectedItems = {
+    ["helmet"] = nil,
+    ["chestArmor"] = nil,
+    ["weapon"] = nil
+  }
 end
 
 function inventories.keypressed(key)
@@ -39,12 +45,22 @@ function inventories.keypressed(key)
       return
     end
     local item = inventory[cursorX][cursorY]
-    inventory[cursorX][cursorY] = nil
-    local oldItem = nil
+
+    if item.consumable then
+      players.itemConsume(item)
+      inventory[cursorX][cursorY] = nil
+      return
+    end
+
     if players.slotOccupied(item.slot) then
-      inventory[cursorX][cursorY] = players.itemTakeOff(item.slot)
+      local oldItem = players.itemTakeOff(item.slot)
+      inventory[cursorX][cursorY] = oldItem
     end
     players.itemPutOn(item)
+    selectedItems[item.slot] = {
+      inventoryX = cursorX,
+      inventoryY = cursorY
+    }
   end
 
 end
@@ -91,6 +107,12 @@ function inventories.draw()
         love.graphics.draw(image, pixelX, pixelY)
       end
     end
+  end
+
+  love.graphics.setColor(180, 180, 180)  
+  for slot, location in pairs(selectedItems) do
+    local pixelX, pixelY = inventories.gridToPixel(location.inventoryX, location.inventoryY)
+    love.graphics.rectangle("line", pixelX - 2, pixelY - 2, 32 + 4, 32 + 4)    
   end
 
   love.graphics.setColor(255, 255, 255)

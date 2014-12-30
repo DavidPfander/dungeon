@@ -54,6 +54,9 @@ end
 testCount = 0
 
 function love.draw()
+
+   -- love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+
   if running == "play" or running == "inventory" then
 
     statusbar.draw()
@@ -107,7 +110,6 @@ function love.keypressed(key)
       running = "inventory"
     else
       players.keypressed(key)
-      print("playeraction!")
 
       -- after the players has moved, it's the enemies turn
       actionPerformed = {}

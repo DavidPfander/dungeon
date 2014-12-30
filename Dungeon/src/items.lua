@@ -12,16 +12,18 @@ function items.buildItemLibrary()
     name = "iron sword",
     damage = 15,
     armor = 0,
-    image = "ironSword.png"
+    image = "ironSword.png",
+    consumable = false
   }
   allItems[#allItems + 1] = ironSword
-  
-    local enchantedIronSword = {
+
+  local enchantedIronSword = {
     slot = "weapon",
     name = "enchanted iron sword",
     damage = 25,
     armor = 0,
-    image = "enchantedIronSword.png"
+    image = "enchantedIronSword.png",
+    consumable = false
   }
   allItems[#allItems + 1] = enchantedIronSword
 
@@ -30,7 +32,8 @@ function items.buildItemLibrary()
     name = "iron chest plate",
     damage = 0,
     armor = 50,
-    image = "ironChestPlate.png"
+    image = "ironChestPlate.png",
+    consumable = false
   }
   allItems[#allItems + 1] = ironChestPlate
 
@@ -39,9 +42,20 @@ function items.buildItemLibrary()
     name = "iron helmet",
     damage = 0,
     armor = 20,
-    image = "ironHelmet.png"
+    image = "ironHelmet.png",
+    consumable = false
   }
   allItems[#allItems + 1] = ironHelmet
+
+  local potion = {
+    name = "potion",
+    health = 30,
+    armor = 0,
+    damage = 0,
+    image = "potion.png",
+    consumable = true
+  }
+  allItems[#allItems + 1] = potion
 end
 
 function items.placeItems(map)
@@ -61,7 +75,7 @@ function items.draw(map)
   for x = 1, #map do
     for y = 1, #map[x] do
       if math.abs(player.gridX - x) > vision or math.abs(player.gridY - y) > vision then
-        -- skip
+      -- skip
       else
         for i = 1, #map[x][y].items do
           local item = map[x][y].items[i]

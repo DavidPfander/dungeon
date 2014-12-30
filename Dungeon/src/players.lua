@@ -93,41 +93,43 @@ function players.keypressed(key)
 
   local newX
   local newY
+  local isMove = false
   if key == "up" then
     newX = player.gridX
     newY = player.gridY - 1
+    isMove = true
   elseif key == "down" then
     newX = player.gridX
     newY = player.gridY + 1
+    isMove = true
   elseif key == "left" then
     newX = player.gridX - 1
     newY = player.gridY
+    isMove = true
   elseif key == "right" then
     newX = player.gridX + 1
     newY = player.gridY
+    isMove = true
   end
 
-  -- check whether enemy was hit
-  if maps.testEnemy(map, newX, newY) then
-    local enemy = getEnemy(map, newX, newY)
-    -- enemies.die(enemy, map)
-    fights.playerAttack(player, enemy, map)
-  elseif maps.testMove(map, newX, newY) then
-    if maps.testItem(newX, newY) then
-      local items = maps.takeItems(newX, newY)
+  if isMove then
+    -- check whether enemy was hit
+    if maps.testEnemy(map, newX, newY) then
+      local enemy = getEnemy(map, newX, newY)
+      fights.playerAttack(player, enemy, map)
+    elseif maps.testMove(map, newX, newY) then
+      maps.movePlayer(player.gridX, player.gridY, newX, newY)
+    end
+  end
+
+  if key == "t" then
+    if maps.testItem(player.gridX, player.gridY) then 
+      local items = maps.takeItems(player.gridX, player.gridY)
       for i = 1, #items do
         local item = items[i]
-        -- players.itemPutOn(items[i])
-        if player.items[item.slot] == nil then
-          players.itemPutOn(item)
-        else
-          inventories.put(item)
-        end
+        inventories.put(item)
       end
     end
-    maps.movePlayer(player.gridX, player.gridY, newX, newY)
-  else
-    return
   end
 end
 
@@ -161,6 +163,12 @@ function players.die()
   gameEnded = true
   console.pushMessage("You died!")
   console.pushMessage("GAME OVER")
+end
+
+function players.itemConsume(item)
+  player.health = player.health + item.health
+  player.damage = player.damage + item.damage
+  player.armor = player.armor + item.armor
 end
 
 return players
