@@ -54,10 +54,13 @@ function enemies.turn(dt, enemy)
 
   if util.checkPathVisible(player.gridX, player.gridY, enemy.gridX, enemy.gridY) then
     console.pushMessage(enemy.name .. " sees player")
-    local pathX, pathY = util.getFirstElementOnPath(enemy.gridX, enemy.gridY, player.gridX, player.gridY)
     if util.getMoveDistance(enemy.gridX, enemy.gridY, player.gridX, player.gridY) > 1 then
-      maps.moveEnemy(enemy, pathX, pathY)
+      local found, pathX, pathY = util.tryFindNextOnPath(enemy.gridX, enemy.gridY, player.gridX, player.gridY)
+      if found then
+        maps.moveEnemy(enemy, pathX, pathY)
+      end
     else
+      fights.playerDefend(enemy)
     end
 
   else

@@ -157,7 +157,7 @@ function players.itemPutOn(item)
   player.armor = player.armor + item.armor
 end
 
-function players.die(player, map)
+function players.die()
   gameEnded = true
   console.pushMessage("You died!")
   console.pushMessage("GAME OVER")

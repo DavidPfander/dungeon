@@ -51,27 +51,33 @@ function util.getMoveDistance(x, y, tileX, tileY)
   return math.abs(x - tileX) + math.abs(y - tileY)
 end
 
-function util.getFirstElementOnPath(x, y, tileX, tileY)
-  local visionPathX = x
-  local visionPathY = y
-  if math.random() > 0.5 then
-    if x - tileX > 0 then
-      visionPathX = x - 1
-    else
-      visionPathX = x + 1
-    end
+function util.tryFindNextOnPath(x, y, tileX, tileY)
+  local nextX = x
+  local nextY = y
+
+  if x - tileX > 0 then
+    nextX = x - 1
   else
-    if y - tileY > 0 then
-      visionPathY = y - 1
-    else
-      visionPathY = y + 1
-    end
+    nextX = x + 1
   end
-  if map[visionPathX][visionPathY].type == "wall" then
-    return util.getFirstElementOnPath(x, y, tileX, tileY)
+  if maps.testMove(map, nextX, nextY) then
+    return true, nextX, nextY
+  end
+
+  nextX = x
+  nextY = y
+
+  if y - tileY > 0 then
+    nextY = y - 1
   else
-    return visionPathX, visionPathY
+    nextY = y + 1
   end
+  if maps.testMove(map, nextX, nextY) then
+    return true, nextX, nextY
+  end
+
+  -- no valid move found
+  return false, nil, nil
 end
 
 function util.getTileLighting(x, y)
