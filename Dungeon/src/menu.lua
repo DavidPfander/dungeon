@@ -82,14 +82,14 @@ function menu.generateMainMenu()
       map = dungeon[1]
       level = 1
 
-      running = "play"
+      screen = "play"
     end
   }
   menu.mainMenu:addItem{
     name = 'Load Game',
     action = function()
       util.loadGame()
-      running = "play"
+      screen = "play"
     end
   }
   menu.mainMenu:addItem{

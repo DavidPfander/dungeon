@@ -8,7 +8,7 @@ require "items"
 require "menu"
 require "statusbar"
 require "inventories"
-require "effects"
+require "animations"
 
 -- TODO order action for effects
 
@@ -17,19 +17,25 @@ function love.load()
   items.buildItemLibrary()
 
   inventories.load()
-  
-  effects.load()
+
+  animations.load()
 
   math.randomseed(os.time())
   hasPlayerPerformedAction = false
   gameEnded = false
   gameWon = false
-  gameUpdateFrequency = 1.0 / 60.0
-  disableEnemyTurn = false
+  -- gameUpdateFrequency = 1.0 / 60.0
+  -- disableEnemyTurn = false
 
-  running = "menu" -- | "play" | "inventory" | "aim" | "effect"
+  -- turn: action -> animations -> enemy -> animations -> enemy -> animations ... -> finish -> action ..
+  turnStates = {ACTION = "action", ENEMY = "enemy"}
+  turnState = turnStates.ACTION
+
+  screen = "menu" -- | "play" | "inventory" | "aim" | "animation"
 
   menu.generateMainMenu()
+
+  turn = 1
 
 end
 
@@ -38,42 +44,108 @@ function getEnemy(map, gridX, gridY)
 end
 
 function love.update(dt)
-  local startTimer = love.timer.getTime()
-  if running == "play" then
-    if enemyCount == 0 then
-      gameWon = true
-    else
-      players.update(dt)
+  print("dt: " .. dt)
+  -- local startTimer = love.timer.getTime()
+  if screen == "play" then
+    if turnState == turnStates.ENEMY then
+      allEnemiesProcessed = processEnemies()
+      if allEnemiesProcessed then
+        turnState = turnStates.ACTION
+        actionPerformed = {}
+      end
+    end
 
-      if not disableEnemyTurn then
-        for i = 1, #map do
-          for j = 1, #map[i] do
-            if map[i][j].monster ~= nil then
-              enemies.update(dt, map, map[i][j].monster)
-            end
+  elseif screen == "animation" then
+    animations.update(dt)
+  elseif screen == "menu" then
+    menu.mainMenu:update(dt)
+  end
+  -- local stopTimer = love.timer.getTime()
+  -- local sleepTime = math.max(0, gameUpdateFrequency - (stopTimer - startTimer))
+  -- love.timer.sleep(sleepTime)
+end
+
+-- player
+-- player effect
+-- updates only after effects
+-- player ememies
+-- player enemy effects
+-- updates only after effects
+
+actionPerformed = {}
+
+function processEnemies()
+  -- after the players has moved, it's the enemies turn
+  for i = 1, #map do
+    for j = 1, #map[i] do
+      if map[i][j].monster ~= nil then
+        local enemy = map[i][j].monster
+        if actionPerformed[enemy] == nil then
+          hasAnimation = enemies.turn(dt, enemy)
+          -- so that the enemy doesn't get another turn should he move in the
+          -- direction of the iteration
+          actionPerformed[enemy] = true
+          print("action performed")
+
+          if hasAnimation then
+            print("with animation")
+            return false
           end
         end
       end
     end
-    console.update()
-    effects.update(dt)
-  else
-    menu.mainMenu:update(dt)
   end
-  local stopTimer = love.timer.getTime()
-  local sleepTime = math.max(0, gameUpdateFrequency - (stopTimer - startTimer))
-  love.timer.sleep(sleepTime)
+  return true
 end
 
-testCount = 0
+function love.keypressed(key)
+  if screen == "play" then
+    if key == "escape" then
+      screen = "menu"
+    elseif gameWon then
+      return
+    elseif turnState == turnStates.ACTION then
+      players.keypressed(key)
+    end
+    
+    print("player action callback finished")
+
+    --      processEnemies()
+
+    --      -- after the players has moved, it's the enemies turn
+    --      actionPerformed = {}
+    --      for i = 1, #map do
+    --        for j = 1, #map[i] do
+    --          if map[i][j].monster ~= nil then
+    --            local enemy = map[i][j].monster
+    --            if actionPerformed[enemy] == nil then
+    --              enemies.turn(dt, enemy)
+    --              -- so that the enemy doesn't get another turn should he move in the
+    --              -- direction of the iteration
+    --              actionPerformed[enemy] = true
+    --            end
+    --          end
+    --        end
+    --      end
+
+  elseif screen == "inventory" then
+    inventories.keypressed(key)
+  elseif screen == "menu" then
+    menu.mainMenu:keypressed(key)
+  elseif screen == "aim" then
+    players.aim(key)
+        print("player action  aim callback finished")
+  end
+end
 
 function love.draw()
 
   -- love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
 
-  if running == "play" or running == "inventory" or running == "aim" then
-
+  if screen == "play" or screen == "inventory" or screen == "aim" or screen == "animation" then
+--    print("drawing..")
     statusbar.draw()
+    
 
     inventories.draw()
 
@@ -90,8 +162,8 @@ function love.draw()
     items.draw(map)
 
     players.draw()
-    
-    effects.draw()
+
+    animations.draw()
 
     if gameEnded then
       love.graphics.setFont(love.graphics.newFont(40))
@@ -112,42 +184,5 @@ function love.draw()
     console.draw()
   else
     menu.mainMenu:draw(10, 10)
-  end
-end
-
-function love.keypressed(key)
-  if running == "play" then
-    if key == "escape" then
-      running = "menu"
-    elseif gameWon then
-      return
-    elseif key == "i" then
-      -- make "running" a string and use it to dispatch modes
-      running = "inventory"
-    else
-      players.keypressed(key)
-
-      -- after the players has moved, it's the enemies turn
-      actionPerformed = {}
-      for i = 1, #map do
-        for j = 1, #map[i] do
-          if map[i][j].monster ~= nil then
-            local enemy = map[i][j].monster
-            if actionPerformed[enemy] == nil then
-              enemies.turn(dt, enemy)
-              -- so that the enemy doesn't get another turn should he move in the
-              -- direction of the iteration
-              actionPerformed[enemy] = true
-            end
-          end
-        end
-      end
-    end
-  elseif running == "inventory" then
-    inventories.keypressed(key)
-  elseif running == "menu" then
-    menu.mainMenu:keypressed(key)
-  elseif running == "aim" then
-    players.aim(key)
   end
 end

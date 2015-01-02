@@ -12,7 +12,8 @@ function enemies.newGoblin(gridX, gridY)
     gridY = gridY,
     actualX = pixelX,
     actualY = pixelY,
-    speed = 10,
+--    speed = 10,
+    speed = 100,
     health = 100,
     damage = 5,
     name = "goblin",
@@ -40,8 +41,31 @@ end
 
 function enemies.update(dt, map, enemy)
   local pixelX, pixelY = util.getPixelLocation(enemy.gridX, enemy.gridY)
-  enemy.actualY = enemy.actualY - ((enemy.actualY - pixelY) * enemy.speed * dt)
-  enemy.actualX = enemy.actualX - ((enemy.actualX - pixelX) * enemy.speed * dt)
+
+  --  enemy.actualY = util.moveWithSpeed(enemy.actualY, pixelY, player.speed, dt)
+  --  enemy.actualX = util.moveWithSpeed(enemy.actualX, pixelX, player.speed, dt)
+  --
+  --  if math.abs(enemy.actualX - pixelX) < 2 and
+  --    math.abs(enemy.actualY - pixelY) < 2 then
+  --    enemy.actualY = pixelY
+  --    enemy.actualX = pixelX
+  --    return true
+  --  else
+  --    return false
+  --  end
+  --
+  enemy.actualX, enemy.actualY = util.moveLinear(
+    enemy.actualX, enemy.actualY,
+    pixelX, pixelY, enemy.speed, dt)
+
+  if enemy.actualX == pixelX and
+    enemy.actualY == pixelY then
+    enemy.actualY = pixelY
+    enemy.actualX = pixelX
+    return true
+  else
+    return false
+  end
 end
 
 function enemies.turn(dt, enemy)
@@ -52,12 +76,17 @@ function enemies.turn(dt, enemy)
     offset = -1
   end
 
+  hasAnimation = false
+
   if util.checkPathVisible(player.gridX, player.gridY, enemy.gridX, enemy.gridY) then
     console.pushMessage(enemy.name .. " sees player")
     if util.getMoveDistance(enemy.gridX, enemy.gridY, player.gridX, player.gridY) > 1 then
       local found, pathX, pathY = util.tryFindNextOnPath(enemy.gridX, enemy.gridY, player.gridX, player.gridY)
       if found then
         maps.moveEnemy(enemy, pathX, pathY)
+        animations.addMovement("enemy", enemy)
+        screen = "animation"
+        hasAnimation = true
       end
     else
       fights.playerDefend(enemy)
@@ -68,13 +97,20 @@ function enemies.turn(dt, enemy)
     if math.random() > 0.5 then
       if maps.testMove(map, enemy.gridX + offset, enemy.gridY) then
         maps.moveEnemy(enemy, enemy.gridX + offset, enemy.gridY)
+        animations.addMovement("enemy", enemy)
+        screen = "animation"
+        hasAnimation = true
       end
     else
       if maps.testMove(map, enemy.gridX, enemy.gridY + offset) then
         maps.moveEnemy(enemy, enemy.gridX, enemy.gridY + offset)
+        animations.addMovement("enemy", enemy)
+        screen = "animation"
+        hasAnimation = true
       end
     end
   end
+  return hasAnimation
 end
 
 function enemies.draw(enemy)

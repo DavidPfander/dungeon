@@ -28,7 +28,7 @@ end
 
 function inventories.keypressed(key)
   if key == "escape" then
-    running = "play"
+    screen = "play"
     return
   end
 
@@ -116,7 +116,7 @@ function inventories.draw()
   end
 
   love.graphics.setColor(255, 255, 255)
-  if running == "inventory" then
+  if screen == "inventory" then
     local pixelX, pixelY = inventories.gridToPixel(cursorX, cursorY)
     love.graphics.rectangle("line", pixelX - 2, pixelY - 2, 32 + 4, 32 + 4)
   end

@@ -9,16 +9,6 @@ local consoleIncrementY = 20
 local maxMessages = 20
 local fontSize = 15
 
-function console.update()
---  local currentTime = love.timer.getTime()
---  for i = #messageStack, 1, -1 do
---    local message = messageStack[i]
---    if math.abs(currentTime - message.time) > 5.0 then
---      table.remove(messageStack, i)
---    end
---  end
-end
-
 function console.draw()
   love.graphics.setColor(100, 150, 100)
   love.graphics.rectangle("line", consoleOriginX , consoleOriginY, 245, 290)

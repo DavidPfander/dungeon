@@ -11,14 +11,16 @@ local playerStatsOriginY = 300
 local playerStatsFontSize = 15
 
 function players.new(playerX, playerY)
+  local pixelX, pixelY = util.getPixelLocation(playerX, playerY)
   local newplayers = {
     gridX = playerX,
     gridY = playerY,
     aimX = playerX,
     aimY = playerY,
-    actualX = 200,
-    actualY = 200,
-    speed = 10,
+    actualX = pixelX,
+    actualY = pixelY,
+    -- speed = 10,
+    speed = 100,
     health = 100,
     damage = 20,
     armor = 0,
@@ -30,8 +32,25 @@ end
 
 function players.update(dt)
   local pixelX, pixelY = util.getPixelLocation(player.gridX, player.gridY)
-  player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
-  player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
+
+  --  player.actualY = player.actualY - ((player.actualY - pixelY) * player.speed * dt)
+  --  player.actualX = player.actualX - ((player.actualX - pixelX) * player.speed * dt)
+
+  --  player.actualY = util.moveWithSpeed(player.actualY, pixelY, player.speed, dt)
+  --  player.actualX = util.moveWithSpeed(player.actualX, pixelX, player.speed, dt)
+
+  player.actualX, player.actualY = util.moveLinear(
+    player.actualX, player.actualY,
+    pixelX, pixelY, player.speed, dt)
+
+  if player.actualX == pixelX and
+    player.actualY == pixelY then
+    player.actualY = pixelY
+    player.actualX = pixelX
+    return true
+  else
+    return false
+  end
 end
 
 function players.draw()
@@ -90,7 +109,7 @@ function players.draw()
   end
 
   -- if in "aim" mode, render currently targeted field
-  if running == "aim" then
+  if screen == "aim" then
     love.graphics.setColor(255, 255, 0)
     love.graphics.rectangle("fill",  player.aimX * 32, player.aimY * 32, 32, 32)
   end
@@ -105,9 +124,11 @@ function players.draw()
 end
 
 function players.keypressed(key)
+
   local newX
   local newY
   local isMove = false
+
   if key == "up" then
     newX = player.gridX
     newY = player.gridY - 1
@@ -124,6 +145,21 @@ function players.keypressed(key)
     newX = player.gridX + 1
     newY = player.gridY
     isMove = true
+  elseif key == "i" then
+    -- make "screen" a string and use it to dispatch modes
+    screen = "inventory"
+  elseif key == "t" then
+    if maps.testItem(player.gridX, player.gridY) then
+      local items = maps.takeItems(player.gridX, player.gridY)
+      for i = 1, #items do
+        local item = items[i]
+        inventories.put(item)
+      end
+    end
+    turnState = turnStates.ENEMY
+  elseif key == "a" then
+    -- how to aim?
+    screen = "aim"
   end
 
   if isMove then
@@ -133,23 +169,12 @@ function players.keypressed(key)
       fights.playerAttack(player, enemy, map)
     elseif maps.testMove(map, newX, newY) then
       maps.movePlayer(player.gridX, player.gridY, newX, newY)
+      animations.addMovement("player", player)
+      screen = "animation"
     end
+    turnState = turnStates.ENEMY
   end
 
-  if key == "t" then
-    if maps.testItem(player.gridX, player.gridY) then
-      local items = maps.takeItems(player.gridX, player.gridY)
-      for i = 1, #items do
-        local item = items[i]
-        inventories.put(item)
-      end
-    end
-  end
-
-  if key == "a" then
-    -- how to aim?
-    running = "aim"
-  end
 end
 
 function players.slotOccupied(slot)
@@ -192,8 +217,7 @@ end
 
 function players.aim(key)
   if key == "escape" then
-    running = "play"
-    disableEnemyTurn = false
+    screen = "play"
     return
   end
 
@@ -207,8 +231,8 @@ function players.aim(key)
     player.aimX = math.min(gridSizeX, player.aimX + 1)
   elseif key == "return" then
     players.fire()
-    running = "play"
-    disableEnemyTurn = false
+    screen = "animation"
+    turnState = turnStates.ENEMY
   end
 end
 
@@ -267,7 +291,7 @@ function players.getAimPath()
       break
     end
   end
-    player.aimPath[#player.aimPath + 1] = {player.aimX, player.aimY}  
+  player.aimPath[#player.aimPath + 1] = {player.aimX, player.aimY}
   return player.aimPath
 end
 
@@ -297,11 +321,9 @@ function players.fire()
     actualHitIndex = #aimPath
   end
 
-  print(#aimPath)
+  print("aimPath: " .. #aimPath)
   if #aimPath > 0 then
-    print(actualHitIndex)
-    print(aimPath[actualHitIndex][1])
-    effects.addProjectile("stone", player.gridX, player.gridY, aimPath[actualHitIndex][1], aimPath[actualHitIndex][2])
+    animations.addProjectile("stone", player.gridX, player.gridY, aimPath[actualHitIndex][1], aimPath[actualHitIndex][2])
   end
 end
 

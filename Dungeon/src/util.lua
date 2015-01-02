@@ -118,4 +118,37 @@ function util.loadGame()
   map = dungeon[level]
 end
 
+--function util.moveWithSpeed(origin, target, speed, dt)
+--  if origin < target then
+--    return math.max(origin, math.min(target, origin - ((origin - target) * speed * dt)))
+--  else
+--    return math.max(target, math.min(origin, origin - ((origin - target) * speed * dt)))
+--  end
+--end
+
+function util.moveLinear(originX, originY, targetX, targetY, speed, dt)
+  local directionX = targetX - originX
+  local directionY = targetY - originY
+  local length = math.sqrt(directionX * directionX + directionY * directionY)
+  directionX = directionX / length
+  directionY = directionY / length
+  local nextX = originX + directionX * dt * speed
+  local nextY = originY + directionY * dt * speed
+  
+  if originX < targetX then
+    nextX = math.max(originX, math.min(targetX, nextX))
+  else
+    nextX = math.max(targetX, math.min(originX, nextX))
+  end
+
+  if originY < targetY then
+    nextY = math.max(originY, math.min(targetY, nextY))
+  else
+    nextY = math.max(targetY, math.min(originY, nextY))
+  end
+  --  projectile.pixelX = projectile.pixelX + directionX * dt * projectile.speed
+  --  projectile.pixelY = projectile.pixelY + directionY * dt * projectile.speed
+  return nextX, nextY
+end
+
 return util

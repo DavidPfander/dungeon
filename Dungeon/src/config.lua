@@ -24,4 +24,4 @@ itemsOnLevel = 10
 
 fullscreen = false
 
-saveFileName = "dugeon.sav"
+saveFileName = "dungeon.sav"
