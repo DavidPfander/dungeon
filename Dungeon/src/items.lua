@@ -1,7 +1,6 @@
 require "util"
 
-local P = {}
-items = P
+items = {}
 
 local allItems = {}
 
@@ -12,7 +11,7 @@ function items.buildItemLibrary()
     name = "stone",
     damage = 15,
     armor = 0,
-    image = "bullet.png",
+    image = love.graphics.newImage("bullet.png"),
     consumable = false
   }
   allItems[#allItems + 1] = stone
@@ -22,7 +21,7 @@ function items.buildItemLibrary()
     name = "iron sword",
     damage = 15,
     armor = 0,
-    image = "ironSword.png",
+    image = love.graphics.newImage("ironSword.png"),
     consumable = false
   }
   allItems[#allItems + 1] = ironSword
@@ -32,7 +31,7 @@ function items.buildItemLibrary()
     name = "enchanted iron sword",
     damage = 25,
     armor = 0,
-    image = "enchantedIronSword.png",
+    image = love.graphics.newImage("enchantedIronSword.png"),
     consumable = false
   }
   allItems[#allItems + 1] = enchantedIronSword
@@ -42,7 +41,7 @@ function items.buildItemLibrary()
     name = "iron chest plate",
     damage = 0,
     armor = 50,
-    image = "ironChestPlate.png",
+    image = love.graphics.newImage("ironChestPlate.png"),
     consumable = false
   }
   allItems[#allItems + 1] = ironChestPlate
@@ -52,7 +51,7 @@ function items.buildItemLibrary()
     name = "iron helmet",
     damage = 0,
     armor = 20,
-    image = "ironHelmet.png",
+    image = love.graphics.newImage("ironHelmet.png"),
     consumable = false
   }
   allItems[#allItems + 1] = ironHelmet
@@ -62,7 +61,7 @@ function items.buildItemLibrary()
     health = 30,
     armor = 0,
     damage = 0,
-    image = "potion.png",
+    image = love.graphics.newImage("potion.png"),
     consumable = true
   }
   allItems[#allItems + 1] = potion
@@ -92,8 +91,8 @@ function items.draw(map)
           local lighting = util.getEnemyLighting(x, y)
           --local lighting = 255
           love.graphics.setColor(lighting, lighting, lighting)
-          local image = love.graphics.newImage(item.image)
-          love.graphics.draw(image, x * util.pixelPerCellX, y * util.pixelPerCellY)
+          -- local image = love.graphics.newImage(item.image)
+          love.graphics.draw(item.image, x * util.pixelPerCellX, y * util.pixelPerCellY)
         end
 
       end

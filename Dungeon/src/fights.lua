@@ -3,15 +3,13 @@ require "console"
 local P = {}
 fights = P
 
-
-
 function fights.playerRangedAttack(player, enemy, projectile)
   enemy.health = enemy.health - player.damage
 
   console.pushMessage("player hit enemy for " .. player.damage .. " damage")
 
   if enemy.health <= 0 then
-    enemies.die(enemy, map)
+    enemy:die(map)
   end
 end
 
@@ -21,7 +19,7 @@ function fights.playerAttack(player, enemy, map)
   console.pushMessage("player hit enemy for " .. player.damage .. " damage")
 
   if enemy.health <= 0 then
-    enemies.die(enemy, map)
+    enemy:die(map)
   end
 end
 
@@ -31,7 +29,7 @@ function fights.playerDefend(enemy)
   console.pushMessage("player was hit by enemy for " .. enemy.damage .. " damage")
 
   if player.health <= 0 then
-    players.die()
+    player:die()
   end
 end
 

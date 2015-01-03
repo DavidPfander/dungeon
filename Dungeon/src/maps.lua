@@ -1,4 +1,6 @@
 require "tiles"
+local Player = require "Player"
+local Enemy = require "Enemy"
 
 local P = {}
 maps = P
@@ -74,7 +76,8 @@ function maps.generate(sizeX, sizeY)
 
       -- Place the player
       if level == 1 and maps.roomCount == 1 then
-        player = players.new(curX, curY)
+        -- player = players.new(curX, curY)
+        player = Player.new(curX, curY)
         maps.map[curX][curY].hasPlayer = true
       end
 
@@ -137,43 +140,47 @@ function maps.generate(sizeX, sizeY)
   return maps.map
 end
 
--- Returns true if the tile is not walkable or there is a monster on the field
+-- Returns true if the tile is not walkable or there is a enemy on the field
 function maps.testMove(map, x, y)
-  if map[x][y].walkable == true and map[x][y].monster == nil and map[x][y].hasPlayer == false then
+  if map[x][y].walkable == true and map[x][y].enemy == nil and map[x][y].hasPlayer == false then
     return true
   end
   --  if not map[x][y].walkable then
   --    console.pushMessage("not walkable")
-  --  elseif map[x][y].monster ~= nil then
-  --    console.pushMessage("monster")
+  --  elseif map[x][y].enemy ~= nil then
+  --    console.pushMessage("enemy")
   --  elseif map[x][y].hasPlayer == true then
   --    console.pushMessage("player")
   --  end
   return false
 end
 
--- Returns true if there is a monster on the field
+function maps.getEnemy(map, x, y)
+  return map[x][y].enemy
+end
+
+-- Returns true if there is a enemy on the field
 function maps.testEnemy(map, x, y)
-  if map[x][y].monster ~= nil then
+  if map[x][y].enemy ~= nil then
     return true
   end
   return false
 end
 
--- Places a new monster "newMonster" on the coordinates "x","y"
-function maps.registerEnemy(map, x, y, newMonster)
-  map[x][y].monster = newMonster
+-- Places a new enemy "newEnemy" on the coordinates "x","y"
+function maps.registerEnemy(map, x, y, newEnemy)
+  map[x][y].enemy = newEnemy
 end
 
--- Places a new monster "newMonster" on the coordinates "x","y"
+-- Places a new enemy "newEnemy" on the coordinates "x","y"
 function maps.removeEnemy(map, x, y, enemy)
-  map[x][y].monster = nil
+  map[x][y].enemy = nil
 end
 
--- Moves the monster "movingMonster" from "oldX","oldY" to "x","y"
+-- Moves the enemy "movingEnemy" from "oldX","oldY" to "x","y"
 function maps.moveEnemy(enemy, x, y)
-  map[enemy.gridX][enemy.gridY].monster = nil
-  map[x][y].monster = enemy
+  map[enemy.gridX][enemy.gridY].enemy = nil
+  map[x][y].enemy = enemy
   enemy.gridX = x
   enemy.gridY = y
 end

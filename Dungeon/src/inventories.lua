@@ -47,16 +47,16 @@ function inventories.keypressed(key)
     local item = inventory[cursorX][cursorY]
 
     if item.consumable then
-      players.itemConsume(item)
+      player:itemConsume(item)
       inventory[cursorX][cursorY] = nil
       return
     end
 
-    if players.slotOccupied(item.slot) then
-      local oldItem = players.itemTakeOff(item.slot)
+    if player:slotOccupied(item.slot) then
+      local oldItem = player:itemTakeOff(item.slot)
       inventory[cursorX][cursorY] = oldItem
     end
-    players.itemPutOn(item)
+    player:itemPutOn(item)
     selectedItems[item.slot] = {
       inventoryX = cursorX,
       inventoryY = cursorY
@@ -102,9 +102,8 @@ function inventories.draw()
         love.graphics.rectangle("line", pixelX, pixelY, 32, 32)
       else
         local item = inventory[i][j]
-        local image = love.graphics.newImage(item.image)
         love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(image, pixelX, pixelY)
+        love.graphics.draw(item.image, pixelX, pixelY)
       end
     end
   end

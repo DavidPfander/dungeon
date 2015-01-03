@@ -1,5 +1,5 @@
-require "players"
-require "enemies"
+-- require "players"
+local Player = require "Player"
 require "maps"
 require "table_save"
 require "config"
@@ -39,12 +39,8 @@ function love.load()
 
 end
 
-function getEnemy(map, gridX, gridY)
-  return map[gridX][gridY].monster
-end
-
 function love.update(dt)
-  print("dt: " .. dt)
+  -- print("dt: " .. dt)
   -- local startTimer = love.timer.getTime()
   if screen == "play" then
     if turnState == turnStates.ENEMY then
@@ -78,17 +74,15 @@ function processEnemies()
   -- after the players has moved, it's the enemies turn
   for i = 1, #map do
     for j = 1, #map[i] do
-      if map[i][j].monster ~= nil then
-        local enemy = map[i][j].monster
+      if maps.testEnemy(map, i, j) then
+        local enemy = maps.getEnemy(map, i, j)
         if actionPerformed[enemy] == nil then
-          hasAnimation = enemies.turn(dt, enemy)
+          hasAnimation = enemy:turn(dt)
           -- so that the enemy doesn't get another turn should he move in the
           -- direction of the iteration
           actionPerformed[enemy] = true
-          print("action performed")
 
           if hasAnimation then
-            print("with animation")
             return false
           end
         end
@@ -105,42 +99,21 @@ function love.keypressed(key)
     elseif gameWon then
       return
     elseif turnState == turnStates.ACTION then
-      players.keypressed(key)
+      player:keypressed(key)
     end
-    
-    print("player action callback finished")
-
-    --      processEnemies()
-
-    --      -- after the players has moved, it's the enemies turn
-    --      actionPerformed = {}
-    --      for i = 1, #map do
-    --        for j = 1, #map[i] do
-    --          if map[i][j].monster ~= nil then
-    --            local enemy = map[i][j].monster
-    --            if actionPerformed[enemy] == nil then
-    --              enemies.turn(dt, enemy)
-    --              -- so that the enemy doesn't get another turn should he move in the
-    --              -- direction of the iteration
-    --              actionPerformed[enemy] = true
-    --            end
-    --          end
-    --        end
-    --      end
 
   elseif screen == "inventory" then
     inventories.keypressed(key)
   elseif screen == "menu" then
     menu.mainMenu:keypressed(key)
   elseif screen == "aim" then
-    players.aim(key)
-        print("player action  aim callback finished")
+    player:aim(key)
   end
 end
 
 function love.draw()
 
-  -- love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+  love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
 
   if screen == "play" or screen == "inventory" or screen == "aim" or screen == "animation" then
 --    print("drawing..")
@@ -153,15 +126,15 @@ function love.draw()
 
     for i = 1, #map do
       for j = 1, #map[i] do
-        if map[i][j].monster ~= nil then
-          enemies.draw(map[i][j].monster)
+        if maps.testEnemy(map, i, j) then
+          maps.getEnemy(map, i, j):draw()
         end
       end
     end
 
     items.draw(map)
 
-    players.draw()
+    player:draw()
 
     animations.draw()
 

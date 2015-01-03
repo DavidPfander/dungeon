@@ -1,3 +1,5 @@
+local Player = require "Player"
+
 local P = {}
 animations = P
 
@@ -21,13 +23,15 @@ function animations.addProjectile(name, gridX, gridY, aimX, aimY)
   local newProjectile = {}
   newProjectile.type = "projectile"
   newProjectile.speed = projectileTemplates[name].speed
-  newProjectile.image = projectileTemplates[name].image
+  newProjectile.image = love.graphics.newImage(projectileTemplates[name].image)
   newProjectile.pixelX = pixelX
   newProjectile.pixelY = pixelY
   newProjectile.aimPixelX = aimPixelX
   newProjectile.aimPixelY = aimPixelY
 
   runningAnimations[#runningAnimations + 1] = newProjectile
+
+  screen = "animation"
 end
 
 -- type can be "player" or "enemy" (until object orientation)
@@ -38,31 +42,21 @@ function animations.addMovement(type, being)
   }
 
   runningAnimations[#runningAnimations + 1] = newMovement
+
+  screen = "animation"
 end
 
 -- updates the location of flying projectiles
 function animations.update(dt)
-  --  print("updating animations..")
-  --  print("animation count: " .. #runningAnimations)
-  --  players.update(dt)
-  --
-  --  for i = 1, #map do
-  --    for j = 1, #map[i] do
-  --      if map[i][j].monster ~= nil then
-  --        enemies.update(dt, map, map[i][j].monster)
-  --      end
-  --    end
-  --  end
-
   -- remove projectiles that have reached their destination
   for i = #runningAnimations, 1, -1 do
     if runningAnimations[i].type == "player" then
-      local finished = players.update(dt)
+      local finished = player:update(dt)
       if finished then
         table.remove(runningAnimations, i)
       end
     elseif runningAnimations[i].type == "enemy" then
-      local finished = enemies.update(dt, map, runningAnimations[i].being)
+      local finished = runningAnimations[i].being:update(dt, map)
       if finished then
         table.remove(runningAnimations, i)
       end
@@ -104,8 +98,7 @@ function animations.draw()
   for i = 1,#runningAnimations do
     if runningAnimations[i].type == "projectile" then
       local projectile = runningAnimations[i]
-      local image = love.graphics.newImage(projectile.image)
-      love.graphics.draw(image, projectile.pixelX, projectile.pixelY)
+      love.graphics.draw(projectile.image, projectile.pixelX, projectile.pixelY)
     end
   end
 end
