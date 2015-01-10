@@ -113,7 +113,7 @@ end
 
 function love.draw()
 
-  love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+  love.graphics.print("Current FPS: " .. tostring(love.timer.getFPS( )), 10, 10)
 
   if screen == "play" or screen == "inventory" or screen == "aim" or screen == "animation" then
 --    print("drawing..")
