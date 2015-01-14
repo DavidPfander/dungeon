@@ -73,8 +73,9 @@ function menu.generateMainMenu()
     action = function()
       dungeon = {}
       for clevel=1,dungeonDepth do
+        print("level: " .. clevel)
         level = clevel
-        dungeon[clevel] = maps.generate(gridSizeX, gridSizeY)
+        dungeon[clevel] = Map.new(gridSizeX, gridSizeY)
         Enemy.placeEnemies(dungeon[clevel])
         items.placeItems(dungeon[clevel])
       end

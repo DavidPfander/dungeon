@@ -73,21 +73,22 @@ function items.placeItems(map)
     local item = allItems[math.random(1, #allItems)]
     local gridX = math.random(2, gridSizeX - 1)
     local gridY = math.random(2, gridSizeY - 1)
-    if maps.testMove(map, gridX, gridY) then
-      map[gridX][gridY].items[#map[gridX][gridY].items + 1] = item
+    if map:testMove(gridX, gridY) then
+      -- TODO remove direct access
+      map.map[gridX][gridY].items[#map.map[gridX][gridY].items + 1] = item
       itemsPlaced = itemsPlaced + 1
     end
   end
 end
 
 function items.draw(map)
-  for x = 1, #map do
-    for y = 1, #map[x] do
+  for x = 1, #map.map do
+    for y = 1, #map.map[x] do
       if math.abs(player.gridX - x) > vision or math.abs(player.gridY - y) > vision then
       -- skip
       else
-        for i = 1, #map[x][y].items do
-          local item = map[x][y].items[i]
+        for i = 1, #map.map[x][y].items do
+          local item = map.map[x][y].items[i]
           local lighting = util.getEnemyLighting(x, y)
           --local lighting = 255
           love.graphics.setColor(lighting, lighting, lighting)

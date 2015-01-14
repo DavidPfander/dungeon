@@ -13,6 +13,7 @@ function Map.new(sizeX, sizeY)
   local numFloorTiles = 0.0
   local mapSize = 0.0
   local roomCount = 0
+  self.level = level
 
   local roomX, roomY, curX, curY, oldRoomX, oldRoomY
 
@@ -32,7 +33,7 @@ function Map.new(sizeX, sizeY)
   end
 
   -- Now generate rooms as long as the map has not enough floor tiles
-  while (self.currentFactor < self.fillFactor) do
+  while (currentFactor < fillFactor) do
     --    print(level)
     local roomLowerX = math.random(2, sizeX - 2)
     local roomLowerY = math.random(2, sizeY - 2)
@@ -159,6 +160,14 @@ function Map.testEnemy(self, x, y)
   return false
 end
 
+-- Returns true if there is a enemy on the field
+function Map.testPlayer(self, x, y)
+  if self.map[x][y].hasPlayer then
+    return true
+  end
+  return false
+end
+
 -- Places a new enemy "newEnemy" on the coordinates "x","y"
 function Map.registerEnemy(self, x, y, newEnemy)
   self.map[x][y].enemy = newEnemy
@@ -186,26 +195,19 @@ function Map.enemyHit(self, x, y)
   end
 end
 
+-- always return the map object in case the player moved on a stair
 function Map.movePlayer(self, oldX, oldY, x, y)
   self.map[oldX][oldY].hasPlayer = false
 
-  if tostring(self.map[x][y].type) == "stairsup" then
-    Map.moveUp(x,y)
-  elseif self.map[x][y].type == "stairsdown" then
-    Map.moveDown(x,y)
-  end
+  map = self
+  local mapChange = false
 
-  if moveUp or moveDown then
-    for stairsX=1,gridSizeX,1 do
-      for stairsY=1,gridSizeY,1 do
-        if (moveUp and self.map[stairsX][stairsY].type == "stairsdown") or
-          (moveDown and self.map[stairsX][stairsY].type == "stairsup") then
-          self.map[stairsX][stairsY].hasPlayer = true
-          player.gridX = stairsX
-          player.gridY = stairsY
-        end
-      end
-    end
+  if tostring(self.map[x][y].type) == "stairsup" then
+    map = self:moveUp(x,y)
+    mapChange = true
+  elseif self.map[x][y].type == "stairsdown" then
+    map = self:moveDown(x,y)
+    mapChange = true
   else
     player.gridX = x
     player.gridY = y
@@ -215,6 +217,7 @@ function Map.movePlayer(self, oldX, oldY, x, y)
   moveUp = false
   moveDown = false
 
+  return mapChange
 end
 
 function Map.draw(self)
@@ -262,7 +265,7 @@ function Map.takeItems(self, x, y)
 end
 
 
-function Map.moveUp(oldX, oldY)
+function Map.moveUp(self, oldX, oldY)
   if level == 1 then
 
   else
@@ -270,6 +273,9 @@ function Map.moveUp(oldX, oldY)
     -- map = dungeon[level]
     moveUp = true
   end
+  map = dungeon[level]
+  map:placePlayerOnStairs("up")
+  print("up -> now on level: " .. level)
   return dungeon[level]
 end
 
@@ -281,7 +287,24 @@ function Map.moveDown(self)
     -- map = dungeon[level]
     moveDown = true
   end
+  map = dungeon[level]
+  print("down -> now on level: " .. level)
+  print(map)
+  map:placePlayerOnStairs("down")
   return dungeon[level]
+end
+
+-- type == "up" or "down"
+function Map.placePlayerOnStairs(self, type)
+  for stairsX=1, gridSizeX do
+    for stairsY=1, gridSizeY do
+      if (type == "up" and self.map[stairsX][stairsY].type == "stairsdown") or
+        (type == "down" and self.map[stairsX][stairsY].type == "stairsup") then
+        self.map[stairsX][stairsY].hasPlayer = true
+        player:place(stairsX, stairsY)
+      end
+    end
+  end
 end
 
 return Map

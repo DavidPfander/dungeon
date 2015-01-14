@@ -11,9 +11,9 @@ dungeonDepth = 7
 vision = 5
 
 enemiesOnLevel = {
-  {goblinsOnLevel = 2, dragonsOnLevel = 0}, -- level 1
-  {goblinsOnLevel = 9, dragonsOnLevel = 1}, -- level 2
-  {goblinsOnLevel = 1, dragonsOnLevel = 9}, -- level 3
+  {goblinsOnLevel = 0, dragonsOnLevel = 0}, -- level 1
+  {goblinsOnLevel = 0, dragonsOnLevel = 0}, -- level 2
+  {goblinsOnLevel = 0, dragonsOnLevel = 0}, -- level 3
   {goblinsOnLevel = 9, dragonsOnLevel = 1}, -- level 4
   {goblinsOnLevel = 9, dragonsOnLevel = 1}, -- level 5
   {goblinsOnLevel = 9, dragonsOnLevel = 1}, -- level 6

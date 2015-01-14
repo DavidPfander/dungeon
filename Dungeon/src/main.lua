@@ -1,6 +1,6 @@
 -- require "players"
 local Player = require "Player"
-require "maps"
+require "Map"
 require "table_save"
 require "config"
 require "console"
@@ -72,10 +72,10 @@ actionPerformed = {}
 
 function processEnemies()
   -- after the players has moved, it's the enemies turn
-  for i = 1, #map do
-    for j = 1, #map[i] do
-      if maps.testEnemy(map, i, j) then
-        local enemy = maps.getEnemy(map, i, j)
+  for i = 1, #map.map do
+    for j = 1, #map.map[i] do
+      if map:testEnemy(i, j) then
+        local enemy = map:getEnemy(i, j)
         if actionPerformed[enemy] == nil then
           hasAnimation = enemy:turn(dt)
           -- so that the enemy doesn't get another turn should he move in the
@@ -122,12 +122,12 @@ function love.draw()
 
     inventories.draw()
 
-    maps.draw()
+    map:draw()
 
-    for i = 1, #map do
-      for j = 1, #map[i] do
-        if maps.testEnemy(map, i, j) then
-          maps.getEnemy(map, i, j):draw()
+    for i = 1, #map.map do
+      for j = 1, #map.map[i] do
+        if map:testEnemy(i, j) then
+          map:getEnemy(i, j):draw()
         end
       end
     end

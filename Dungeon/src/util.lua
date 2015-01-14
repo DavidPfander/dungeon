@@ -39,7 +39,7 @@ function util.checkPathVisible(x,y,tileX,tileY)
   while(math.abs(visionPathX - tileX) > 1 or math.abs(visionPathY - tileY) > 1) do
     visionPathX = util.round(x + (factor * (tileX - x)) / distance)
     visionPathY = util.round(y + (factor * (tileY - y)) / distance)
-    if map[util.round(visionPathX)][util.round(visionPathY)].type == "wall" then
+    if map.map[util.round(visionPathX)][util.round(visionPathY)].type == "wall" then
       visible = false
     end
     factor = factor + 1.0
@@ -60,7 +60,7 @@ function util.tryFindNextOnPath(x, y, tileX, tileY)
   else
     nextX = x + 1
   end
-  if maps.testMove(map, nextX, nextY) then
+  if map:testMove(nextX, nextY) then
     return true, nextX, nextY
   end
 
@@ -72,7 +72,7 @@ function util.tryFindNextOnPath(x, y, tileX, tileY)
   else
     nextY = y + 1
   end
-  if maps.testMove(map, nextX, nextY) then
+  if map:testMove(nextX, nextY) then
     return true, nextX, nextY
   end
 

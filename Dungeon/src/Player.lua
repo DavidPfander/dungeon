@@ -139,8 +139,8 @@ function Player.keypressed(self, key)
     -- make "screen" a string and use it to dispatch modes
     screen = "inventory"
   elseif key == "t" then
-    if maps.testItem(self.gridX, self.gridY) then
-      local items = maps.takeItems(self.gridX, self.gridY)
+    if map:testItem(self.gridX, self.gridY) then
+      local items = map:takeItems(self.gridX, self.gridY)
       for i = 1, #items do
         local item = items[i]
         inventories.put(item)
@@ -154,14 +154,19 @@ function Player.keypressed(self, key)
 
   if isMove then
     -- check whether enemy was hit
-    if maps.testEnemy(map, newX, newY) then
-      local enemy = maps.getEnemy(map, newX, newY)
+    if map:testEnemy(newX, newY) then
+      local enemy = map:getEnemy(newX, newY)
       fights.playerAttack(self, enemy, map)
-    elseif maps.testMove(map, newX, newY) then
-      maps.movePlayer(self.gridX, self.gridY, newX, newY)
-      animations.addMovement("player", self)
+    elseif map:testMove(newX, newY) then
+      local mapChange = map:movePlayer(self.gridX, self.gridY, newX, newY)
+      if (mapChange) then
+        turnState = turnStates.ACTION
+      else
+        animations.addMovement("player", self)
+        turnState = turnStates.ENEMY
+      end
     end
-    turnState = turnStates.ENEMY
+
   end
 
 end
@@ -296,11 +301,11 @@ function Player.fire(self)
   for i = 1,#aimPath do
     local pathX = aimPath[i][1]
     local pathY = aimPath[i][2]
-    if map[pathX][pathY].type == "wall" then
+    if map.map[pathX][pathY].type == "wall" then
       actualHitIndex = i
       break
-    elseif maps.testEnemy(map, pathX, pathY) then
-      fights.playerRangedAttack(self, maps.testEnemy(map, pathX, pathY), projectile)
+    elseif map:testEnemy(pathX, pathY) then
+      fights.playerRangedAttack(self, map:testEnemy(pathX, pathY), projectile)
       actualHitIndex = i
       break
     end
@@ -312,6 +317,12 @@ function Player.fire(self)
   if #aimPath > 0 then
     animations.addProjectile("stone", self.gridX, self.gridY, aimPath[actualHitIndex][1], aimPath[actualHitIndex][2])
   end
+end
+
+function Player.place(self, x, y)
+  player.gridX = x
+  player.gridY = y
+  animations.addMovement("player", self)
 end
 
 return Player

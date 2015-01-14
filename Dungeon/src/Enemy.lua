@@ -75,7 +75,7 @@ function Enemy.turn(self, dt)
     if util.getMoveDistance(self.gridX, self.gridY, player.gridX, player.gridY) > 1 then
       local found, pathX, pathY = util.tryFindNextOnPath(self.gridX, self.gridY, player.gridX, player.gridY)
       if found then
-        maps.moveEnemy(self, pathX, pathY)
+        map:moveEnemy(self, pathX, pathY)
         animations.addMovement("enemy", self)
         hasAnimation = true
       end
@@ -86,14 +86,14 @@ function Enemy.turn(self, dt)
   else
 
     if math.random() > 0.5 then
-      if maps.testMove(map, self.gridX + offset, self.gridY) then
-        maps.moveEnemy(self, self.gridX + offset, self.gridY)
+      if map:testMove(self.gridX + offset, self.gridY) then
+        map:moveEnemy(self, self.gridX + offset, self.gridY)
         animations.addMovement("enemy", self)
         hasAnimation = true
       end
     else
-      if maps.testMove(map, self.gridX, self.gridY + offset) then
-        maps.moveEnemy(self, self.gridX, self.gridY + offset)
+      if map:testMove(self.gridX, self.gridY + offset) then
+        map:moveEnemy(self, self.gridX, self.gridY + offset)
         animations.addMovement("enemy", self)
         hasAnimation = true
       end
@@ -119,16 +119,16 @@ function Enemy.draw(self)
   -- love.graphics.setColor(oldColor)
 end
 
-function Enemy.placeEnemies()
+function Enemy.placeEnemies(map)
   -- place goblins
   local EnemyPlaced = 0
   local enemyCount = enemiesOnLevel[level].goblinsOnLevel
   while EnemyPlaced < enemyCount do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
-    if maps.testMove(enemyX, enemyY) and not maps.testEnemy(enemyX, enemyY) and not maps.testPlayer(enemyX, enemyY) then
+    if map:testMove(enemyX, enemyY) and not map:testEnemy(enemyX, enemyY) and not map:testPlayer(enemyX, enemyY) then
       local newEnemy = Enemy.newGoblin(enemyX, enemyY)
-      maps.registerEnemy(enemyX, enemyY, newEnemy)
+      map:registerEnemy(enemyX, enemyY, newEnemy)
       EnemyPlaced = EnemyPlaced + 1
     end
   end
@@ -139,16 +139,17 @@ function Enemy.placeEnemies()
   while EnemyPlaced < enemyCount do
     local enemyX = math.random(1, gridSizeX)
     local enemyY = math.random(1, gridSizeY)
-    if maps.testMove(map, enemyX, enemyY) and not maps.testEnemy(map, enemyX, enemyY) and not map[enemyX][enemyY].hasPlayer then
+    -- TODO remove direct access to map object
+    if map:testMove(enemyX, enemyY) and not map:testEnemy(enemyX, enemyY) and not map.map[enemyX][enemyY].hasPlayer then
       local newEnemy = Enemy.newDragon(enemyX, enemyY)
-      maps.registerEnemy(map, enemyX, enemyY, newEnemy)
+      map:registerEnemy(enemyX, enemyY, newEnemy)
       EnemyPlaced = EnemyPlaced + 1
     end
   end
 end
 
 function Enemy.die(self, map)
-  maps.removeEnemy(map, self.gridX, self.gridY, self)
+  map:removeEnemy(self.gridX, self.gridY, self)
   console.pushMessage(self.name .. " dies!")
 end
 
